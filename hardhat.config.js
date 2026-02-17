@@ -24,5 +24,10 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
       chainId: 1,
     },
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 84532
+    }
   },
 };
