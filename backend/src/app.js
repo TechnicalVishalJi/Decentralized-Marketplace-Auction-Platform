@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const blockchainConfig = require('./config/blockchain')
+const routes = require('./routes');
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use('/api/', limiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/v1', routes);
 
 app.get('/health', (req, res) => {
   res.json({
