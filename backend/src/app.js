@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const blockchainConfig = require('./config/blockchain')
 
 const app = express();
 
@@ -31,5 +32,13 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+blockchainConfig.initialize()
+  .then(() => {
+    console.log('Blockchain ready');
+  })
+  .catch(err => {
+    console.error(`Blockchain failed: ${err.message}`);
+  });
 
 module.exports = app;
