@@ -133,6 +133,29 @@ You need deployment flows.
 2.  Scripts to upload metadata to IPFS.
     
 3.  Config for Etherscan verification.
+
+4.  Create backend using expressjs with all functions for blockchain interaction.
+
+5.  Use Mongodb database as caching layer of blockchain and also to store user login info.
+
+6.  Add API security with rate limiting, helmet and input Validation.
+
+7.  Copy contract ABIs into contracts folder in backend.
+
+8.  Add JWT secure secrets for login and signup.
+
+9.  Add hybrid architecture in which we have :  
+    Blockchain (Source of Truth)  
+       ↓  
+   Event Listener (Backend)  
+       ↓  
+   Database (Cache)  
+       ↓  
+   API (Fast Queries)   
+       ↓  
+   Frontend (Instant Results)  
+
+10.  Use Event Listeners to keep database in sync with blockchain.
     
 
 **Deliverables**
