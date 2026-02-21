@@ -70,24 +70,24 @@ const FeatureShowcase3D = () => {
           card,
           { x: "100%", z: -500, opacity: 0, rotateY: 0, scale: 0.5 },
           {
-            x: "10%",
-            z: 0,
+            x: "00%",
+            z: "0",
             opacity: 1,
-            rotateY: 1800, // Exactly 5 full spins
+            rotateY: 1110, // Exactly 5 full spins
             scale: 0.95, // scale slightly down
             duration: 2.5,
-            ease: "circ.out", // smooth deceleration curve
+            ease: "power4.out", // smooth deceleration curve
           },
         );
 
         // 2. Showcase Mode: Continuous float slightly left and explicit rotation drift.
         // Easing changed to sine.inOut to smoothly accelerate out of the complete stop, and decelerate into the exit phase.
         tl.to(card, {
-          rotateY: 1845,
-          x: "-10%",
-          scale: 1, // slightly pulse up to 1
-          duration: 3.5,
-          ease: "sine.inOut", // Seamless transition
+          rotateY: 1050,
+          x: "0",
+          scale: 1,
+          duration: 2.5,
+          ease: "power4.inOut",
         });
 
         // 3. Exit: Spin out very fast and shoot backward into the left (behind the text)
@@ -102,7 +102,7 @@ const FeatureShowcase3D = () => {
         });
 
         // Overlap the entrance of the NEXT card with the exit of the CURRENT card by 0.6 seconds for seamless flow
-        masterTl.add(tl, i === 0 ? 0 : "-=0.6");
+        masterTl.add(tl, i === 0 ? 0 : "-=0.0");
       });
     },
     { scope: containerRef },

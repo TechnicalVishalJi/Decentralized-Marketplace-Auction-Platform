@@ -87,24 +87,39 @@
 .orb2 {
     position: absolute;
     border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.3;
+    filter: blur(90px);
+    opacity: 0.6;
+    animation: floatOrb 2.5s infinite alternate ease-in-out;
 }
 
 .orb1 {
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 350px;
     background: var(--color-accent);
-    top: 0;
-    left: 0;
+    top: 10%;
+    right: 15%;
+    /* Keep strictly behind the cards */
 }
 
 .orb2 {
     width: 300px;
     height: 300px;
     background: #EC4899;
-    bottom: 0;
-    right: 0;
+    bottom: 10%;
+    right: 5%;
+    animation-delay: -6s;
+    /* Offset movement */
+}
+
+@keyframes floatOrb {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        /* Move diagonally slightly emphasizing the glass */
+        transform: translate(-150px, 100px) scale(1.15);
+    }
 }
 
 /* 3D Carousel Container constrainer */
@@ -145,11 +160,16 @@
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.4);
+    /* True Premium glassmorphism with shine */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    /* Shiny beveled reflection */
+    box-shadow:
+        0 40px 80px rgba(0, 0, 0, 0.2),
+        inset 1px 1px 0px rgba(255, 255, 255, 0.5),
+        inset -1px -1px 0px rgba(255, 255, 255, 0.1);
 }
 
 .cardFront {
