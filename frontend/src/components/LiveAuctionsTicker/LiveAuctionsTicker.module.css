@@ -1,0 +1,125 @@
+.tickerSection {
+    padding: 60px 0;
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--glass-border-solid);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.pulseIndicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #EF4444;
+    /* Red for live */
+    background: rgba(239, 68, 68, 0.1);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+}
+
+.pulseDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #EF4444;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+.tickerWrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    /* Add subtle white fading on edges */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.tickerTrack {
+    display: flex;
+    gap: 24px;
+    width: fit-content;
+    padding: 10px 0;
+}
+
+.auctionCard {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    min-width: 320px;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+    cursor: pointer;
+    background: var(--color-bg-secondary);
+}
+
+.auctionCard:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-accent);
+}
+
+.auctionImage {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}
+
+.auctionInfo {
+    flex: 1;
+}
+
+.auctionInfo h4 {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bidRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bidValue {
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.timeTag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-primary);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}

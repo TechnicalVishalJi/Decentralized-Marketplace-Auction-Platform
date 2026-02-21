@@ -1,0 +1,128 @@
+.feedContainer {
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.feedHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--glass-border-solid);
+}
+
+.feedHeader h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.25rem;
+}
+
+.headerIcon {
+    color: var(--color-accent);
+}
+
+.livePulse {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+}
+
+.feedList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+}
+
+.feedItem {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.iconWrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Icon specific coloring classes */
+.purchase {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.mint {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--color-accent);
+}
+
+.bid {
+    background: rgba(245, 158, 11, 0.1);
+    color: #F59E0B;
+}
+
+.like {
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+}
+
+.feedContent {
+    flex: 1;
+}
+
+.feedText {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    color: var(--color-text-secondary);
+}
+
+.user {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.item {
+    font-weight: 600;
+    color: var(--color-accent);
+}
+
+.feedMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.time {
+    color: #94A3B8;
+}
+
+.value {
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.viewAllBtn {
+    margin-top: 16px;
+    width: 100%;
+    border: 1px solid var(--glass-border-solid);
+}
+
+.viewAllBtn:hover {
+    background: var(--color-bg-primary) !important;
+    color: var(--color-text-primary) !important;
+}

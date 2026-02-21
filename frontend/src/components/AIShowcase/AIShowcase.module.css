@@ -1,0 +1,214 @@
+.aiSection {
+    padding: 100px 0;
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--glass-border-solid);
+    position: relative;
+    overflow: hidden;
+}
+
+.aiLayout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 64px;
+}
+
+.textContent {
+    flex: 1;
+    max-width: 600px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--color-accent);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+}
+
+.title {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.featureList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.featureList li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.05rem;
+    color: var(--color-text-primary);
+    font-weight: 500;
+}
+
+.checkIcon {
+    color: #10B981;
+    font-size: 1.2rem;
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 50%;
+    padding: 2px;
+}
+
+.ctaBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+}
+
+/* Visualization Side */
+.visualContent {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.interactiveDemo {
+    width: 100%;
+    max-width: 500px;
+    padding: 24px;
+    position: relative;
+    z-index: 2;
+    border-top-color: rgba(255, 255, 255, 0.8);
+    /* Stronger specular highlight */
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+}
+
+.demoHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+
+.promptBox {
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--glass-border-solid);
+    border-radius: var(--radius-sm);
+    margin-bottom: 24px;
+    min-height: 80px;
+}
+
+.typingText {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+}
+
+.typingText span:first-child {
+    color: var(--color-accent);
+}
+
+.cursor {
+    animation: blink 1s step-end infinite;
+    color: var(--color-text-primary);
+    font-weight: bold;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.imageRevealArea {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+}
+
+.demoImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scanningLine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--color-accent);
+    box-shadow: 0 0 15px var(--color-accent);
+    z-index: 10;
+    animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+    0% {
+        top: 0;
+        opacity: 1;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    50% {
+        top: 100%;
+        opacity: 0;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
+}
+
+/* Background blob for absolute premium feel */
+.bgBlobRow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 900px) {
+    .aiLayout {
+        flex-direction: column;
+    }
+
+    .title {
+        font-size: 2.8rem;
+    }
+}

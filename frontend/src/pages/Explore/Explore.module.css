@@ -1,0 +1,211 @@
+.explorePage {
+    min-height: 100vh;
+    padding-top: 80px;
+}
+
+/* Header Section */
+.exploreHeader {
+    padding: 60px 0;
+    text-align: center;
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--glass-border-solid);
+}
+
+.title {
+    font-size: 3.5rem;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+}
+
+.subtitle {
+    font-size: 1.15rem;
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+    line-height: 1.6;
+}
+
+.searchBarWrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    background: white;
+    padding: 8px;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--glass-border-solid);
+    transition: box-shadow var(--transition-smooth);
+}
+
+.searchBarWrapper:focus-within {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: var(--color-accent);
+}
+
+.largeSearch {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    font-size: 1.05rem;
+    outline: none;
+    color: var(--color-text-primary);
+}
+
+.searchBarWrapper button {
+    padding: 10px 32px;
+    border-radius: var(--radius-full);
+}
+
+/* Content Section */
+.exploreContent {
+    padding: 40px 0;
+    background-color: var(--color-bg-secondary);
+}
+
+/* Filter Controls */
+.filterControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.categories {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.categoryPill {
+    padding: 8px 20px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-primary);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--glass-border-solid);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+}
+
+.categoryPill:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text-primary);
+}
+
+.activeCategory {
+    background: var(--color-text-primary);
+    color: white;
+    border-color: var(--color-text-primary);
+}
+
+.activeCategory:hover {
+    color: white;
+    border-color: var(--color-text-primary);
+}
+
+.sortingArea {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.sortBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: transparent;
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.sortBtn:hover {
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+.viewToggles {
+    display: flex;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    border: 1px solid var(--glass-border-solid);
+}
+
+.iconBtn {
+    padding: 8px;
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+}
+
+.activeIcon {
+    background: white;
+    color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Grid & List Views */
+.nftGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.nftList {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+    /* Additional logic can be applied to NFTCard via prop if list mode is heavily differentiated */
+}
+
+.emptyState {
+    text-align: center;
+    padding: 80px 0;
+    color: var(--color-text-secondary);
+}
+
+.emptyState h3 {
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+}
+
+.loadMoreContainer {
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2.8rem;
+    }
+
+    .searchBarWrapper {
+        flex-direction: column;
+        border-radius: var(--radius-md);
+    }
+
+    .searchBarWrapper button {
+        border-radius: var(--radius-sm);
+    }
+
+    .filterControls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .sortingArea {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

@@ -1,0 +1,133 @@
+.trendingSection {
+    padding: 100px 0;
+    background-color: var(--color-bg-primary);
+}
+
+/* We removed featuresSection but kept trendingSection */
+.mainContentLayout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.trendingSide {
+    flex: 2;
+    /* Two thirds width */
+}
+
+.feedSide {
+    flex: 1;
+    /* One third width */
+    position: sticky;
+    top: 100px;
+    height: calc(100vh - 120px);
+}
+
+@media (max-width: 1024px) {
+    .mainContentLayout {
+        flex-direction: column;
+    }
+
+    .trendingSide,
+    .feedSide {
+        width: 100%;
+    }
+
+    .feedSide {
+        position: relative;
+        top: 0;
+        height: auto;
+    }
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.sectionHeader h2 {
+    font-size: 2.5rem;
+    letter-spacing: -0.5px;
+}
+
+.nftGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+}
+
+/* Temp NFT Card placeholder styling (will be replaced by full component later) */
+.tempNftCard {
+    padding: 12px;
+    border-radius: var(--radius-lg);
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+    cursor: pointer;
+    background-color: var(--color-bg-secondary);
+}
+
+.tempNftCard:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.imageWrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.imageWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-smooth);
+}
+
+.tempNftCard:hover .imageWrapper img {
+    transform: scale(1.05);
+}
+
+.cardInfo {
+    padding: 0 8px 8px 8px;
+}
+
+.cardInfo h4 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.cardInfo p {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+}
+
+.priceRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-bg-primary);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+}
+
+.priceRow span {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+.priceRow strong {
+    font-size: 1rem;
+    color: var(--color-text-primary);
+}

@@ -1,0 +1,231 @@
+/* HeroSection.module.css */
+
+.heroSection {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 80px;
+    /* Offset for navbar */
+}
+
+/* Video Background */
+.videoWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.bgVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.videoOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right,
+            rgba(248, 250, 252, 0.95) 0%,
+            /* Solid white-ish on left for text readability */
+            rgba(248, 250, 252, 0.5) 40%,
+            rgba(248, 250, 252, 0) 80%);
+    /* background: transparent; */
+    z-index: 1;
+}
+
+/* Content Layout */
+.heroContent {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 48px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.textContent {
+    flex: 1;
+    max-width: 650px;
+}
+
+.title {
+    font-size: 4.5rem;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+    text-shadow: 0 2px 20px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.6);
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 40px;
+    line-height: 1.6;
+    max-width: 550px;
+    font-weight: 500;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.9);
+}
+
+/* Buttons */
+.ctaButtons {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 64px;
+}
+
+.mainBtn {
+    padding: 16px 36px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    background: linear-gradient(270deg, rgba(99, 102, 241, 0.8), rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8), rgba(99, 102, 241, 0.8));
+    background-size: 300% 300%;
+    animation: gradientMove 4s ease infinite;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3), 0 0 20px rgba(139, 92, 246, 0.2) inset;
+    transition: all var(--transition-fast);
+}
+
+.mainBtn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.5), 0 0 30px rgba(236, 72, 153, 0.4) inset;
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.secondaryBtn {
+    padding: 16px 36px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all var(--transition-smooth);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.secondaryBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+    transition: all 0.5s ease;
+}
+
+.secondaryBtn:hover::before {
+    left: 150%;
+}
+
+.secondaryBtn:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Statistics */
+.statsRow {
+    display: flex;
+    gap: 48px;
+}
+
+.statBox h3 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.statBox p {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+
+
+/* Responsive constraints */
+@media (max-width: 1100px) {
+    .title {
+        font-size: 3.5rem;
+    }
+
+    .heroContent {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 40px;
+    }
+
+    .videoOverlay {
+        background: rgba(248, 250, 252, 0.85);
+        /* Solid overlay when stacked */
+    }
+
+    .ctaButtons {
+        justify-content: center;
+    }
+
+    .statsRow {
+        justify-content: center;
+    }
+
+
+}
+
+@media (max-width: 600px) {
+    .title {
+        font-size: 2.5rem;
+    }
+
+    .ctaButtons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .statsRow {
+        flex-wrap: wrap;
+        gap: 24px;
+    }
+}
