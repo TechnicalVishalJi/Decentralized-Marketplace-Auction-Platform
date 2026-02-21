@@ -27,7 +27,7 @@ const mockAuctions = [
     bid: "0.5 ETH",
     time: "12:05:00",
     image:
-      "https://images.unsplash.com/photo-1614812513172-567d2fe9cd91?w=200&h=200&fit=crop",
+      "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?w=200&h=200&fit=crop",
   },
   {
     id: 104,

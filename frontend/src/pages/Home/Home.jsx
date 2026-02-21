@@ -33,7 +33,7 @@ const mockNFTs = [
     creator: "Alchemist",
     price: "5.2",
     image:
-      "https://images.unsplash.com/photo-1614812513172-567d2fe9cd91?q=80&w=2670&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?q=80&w=2670&auto=format&fit=crop",
   },
   {
     id: 4,

@@ -94,7 +94,7 @@
 
 .searchInput:focus {
     background: #ffffff;
-    border-color: var(--color-accent);
+    /* border-color: var(--color-accent); */
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
@@ -115,13 +115,16 @@
 .navLink {
     font-weight: 500;
     color: var(--color-text-secondary);
-    transition: color var(--transition-fast);
+    transition: color var(--transition-fast), transform var(--transition-smooth);
     position: relative;
+    display: inline-block;
 }
 
 .navLink:hover,
 .active {
     color: var(--color-text-primary);
+    transform: translateY(-3px) scale(1.05);
+    /* Premium Pop Effect */
 }
 
 .navLink::after {

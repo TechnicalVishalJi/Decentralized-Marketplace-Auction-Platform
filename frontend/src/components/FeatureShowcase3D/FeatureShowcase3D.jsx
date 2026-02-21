@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import {
@@ -29,20 +30,20 @@ const features = [
   {
     id: 3,
     icon: <FiCpu />,
-    title: "Neural Engine Generator",
-    desc: "Bleeding-edge decentralized AI integration. Instantly generate stunning 4K masterpieces directly from your imagination.",
+    title: "AI Image Generator",
+    desc: "Bleeding-edge AI integration. Instantly generate stunning masterpieces directly from your imagination.",
   },
   {
     id: 4,
     icon: <FiEye />,
     title: "AI Plagiarism Detection",
-    desc: "State-of-the-art HuggingFace CLIP vision models automatically scan the blockchain to reject stolen or duplicate artwork.",
+    desc: "State-of-the-art vision models automatically scan the blockchain to reject stolen or duplicate artwork.",
   },
   {
     id: 5,
     icon: <FiMessageSquare />,
     title: "Smart Concierge Chatbot",
-    desc: "An intelligent, context-aware AI assistant powered by Groq to guide you through the intricacies of Web3 minting.",
+    desc: "An intelligent, context-aware AI assistant to guide you through the intricacies of Web3 minting.",
   },
   {
     id: 6,
@@ -115,19 +116,48 @@ const FeatureShowcase3D = () => {
 
       <div className={`container ${styles.layout}`}>
         {/* Left Side: Text Content overlays the glass safe zone */}
-        <div className={styles.textContent}>
-          <div className={styles.badge}>Live Ecosystem</div>
-          <h2 className={styles.title}>
+        <motion.div
+          className={styles.textContent}
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <motion.div
+            className={styles.badge}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            Live Ecosystem
+          </motion.div>
+          <motion.h2
+            className={styles.title}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+          >
             Powered by Next-Gen <br />
             <span className="gradient-text">Web3 Technology</span>
-          </h2>
-          <p className={styles.subtitle}>
+            <br />
+            With
+            <span className="gradient-text"> AI</span>
+          </motion.h2>
+          <motion.p
+            className={styles.subtitle}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          >
             This isn't just a UI wrapper. CryptoMarket is a fully functional
             decentralized application built to showcase the integration of
             hyper-fast L2 blockchain transactions with intelligent AI
             microservices.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Right Side: 3D Scene */}
         <div className={styles.scene3d}>

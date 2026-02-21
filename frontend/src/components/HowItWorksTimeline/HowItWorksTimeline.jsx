@@ -49,30 +49,55 @@ const HowItWorksTimeline = () => {
           <div className={styles.line}></div>
 
           <div className={styles.timelineGrid}>
-            {timelineSteps.map((step, index) => (
-              <motion.div
-                key={index}
-                className={styles.stepCardWrap}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-              >
-                <div className={`glass-panel ${styles.stepCard}`}>
-                  <div
-                    className={styles.iconBox}
-                    style={{ color: step.color, background: `${step.color}15` }}
-                  >
-                    {step.icon}
-                  </div>
-                  <h3>{step.title}</h3>
-                  <p>{step.desc}</p>
+            {timelineSteps.map((step, index) => {
+              // Scatter cards like flies: left/right alternating, random Y, random rotation
+              const isEven = index % 2 === 0;
+              const scatterX = isEven
+                ? -150 - Math.random() * 50
+                : 150 + Math.random() * 50;
+              const scatterY = (Math.random() - 0.5) * 150;
+              const scatterRotate = (Math.random() - 0.5) * 45;
 
-                  {/* Step Number Badge */}
-                  <div className={styles.stepNumber}>0{index + 1}</div>
-                </div>
-              </motion.div>
-            ))}
+              return (
+                <motion.div
+                  key={index}
+                  className={styles.stepCardWrap}
+                  initial={{
+                    opacity: 0,
+                    x: scatterX,
+                    y: scatterY,
+                    rotate: scatterRotate,
+                    scale: 0.5,
+                  }}
+                  whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+                  transition={{
+                    duration: 1.2,
+                    delay: index * 0.15,
+                    type: "spring",
+                    stiffness: 70,
+                    damping: 12,
+                  }}
+                >
+                  <div className={`glass-panel ${styles.stepCard}`}>
+                    <div
+                      className={styles.iconBox}
+                      style={{
+                        color: step.color,
+                        background: `${step.color}15`,
+                      }}
+                    >
+                      {step.icon}
+                    </div>
+                    <h3>{step.title}</h3>
+                    <p>{step.desc}</p>
+
+                    {/* Step Number Badge */}
+                    <div className={styles.stepNumber}>0{index + 1}</div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>
