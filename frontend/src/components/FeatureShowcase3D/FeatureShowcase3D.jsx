@@ -70,7 +70,7 @@ const FeatureShowcase3D = () => {
           card,
           { x: "100%", z: -500, opacity: 0, rotateY: 0, scale: 0.5 },
           {
-            x: "00%",
+            x: "0%",
             z: "0",
             opacity: 1,
             rotateY: 1110, // Exactly 5 full spins

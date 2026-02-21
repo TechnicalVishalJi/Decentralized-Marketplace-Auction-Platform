@@ -6,6 +6,7 @@ import ActivityFeed from "../../components/ActivityFeed/ActivityFeed";
 import AIShowcase from "../../components/AIShowcase/AIShowcase";
 import FeatureShowcase3D from "../../components/FeatureShowcase3D/FeatureShowcase3D";
 import HowItWorksTimeline from "../../components/HowItWorksTimeline/HowItWorksTimeline";
+import CallToAction from "../../components/CallToAction/CallToAction";
 import styles from "./Home.module.css";
 
 // Mock Data for UI Designing Phase
@@ -89,6 +90,8 @@ const Home = () => {
       <FeatureShowcase3D />
 
       <HowItWorksTimeline />
+
+      <CallToAction />
     </div>
   );
 };

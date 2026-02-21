@@ -87,27 +87,29 @@
 .orb2 {
     position: absolute;
     border-radius: 50%;
-    filter: blur(90px);
-    opacity: 0.6;
-    animation: floatOrb 2.5s infinite alternate ease-in-out;
-}
-
-.orb1 {
-    width: 350px;
-    height: 350px;
-    background: var(--color-accent);
-    top: 10%;
-    right: 15%;
+    /* Added slight blur effect to soften objects */
+    filter: blur(50px);
+    opacity: 0.95;
+    animation: floatOrb 5s infinite alternate ease-in-out;
+    z-index: 1;
     /* Keep strictly behind the cards */
 }
 
+.orb1 {
+    width: 240px;
+    height: 240px;
+    background: var(--color-accent);
+    top: 15%;
+    right: 25%;
+}
+
 .orb2 {
-    width: 300px;
-    height: 300px;
+    width: 180px;
+    height: 180px;
     background: #EC4899;
-    bottom: 10%;
-    right: 5%;
-    animation-delay: -6s;
+    bottom: 15%;
+    right: 12%;
+    animation-delay: -2.5s;
     /* Offset movement */
 }
 
@@ -145,6 +147,9 @@
     opacity: 0;
     /* GSAP reveals it */
     will-change: transform, opacity;
+    border-radius: 40px;
+    backdrop-filter: blur(80px);
+    -webkit-backdrop-filter: blur(80px);
 }
 
 .cardFront,
@@ -161,15 +166,13 @@
     -webkit-backface-visibility: hidden;
 
     /* True Premium glassmorphism with shine */
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     /* Shiny beveled reflection */
     box-shadow:
         0 40px 80px rgba(0, 0, 0, 0.2),
-        inset 1px 1px 0px rgba(255, 255, 255, 0.5),
-        inset -1px -1px 0px rgba(255, 255, 255, 0.1);
+        inset 1px 1px 0px rgba(255, 255, 255, 0.6),
+        inset -1px -1px 0px rgba(255, 255, 255, 0.2);
 }
 
 .cardFront {
