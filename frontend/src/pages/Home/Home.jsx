@@ -4,6 +4,7 @@ import NFTCard from "../../components/NFTCard/NFTCard";
 import LiveAuctionsTicker from "../../components/LiveAuctionsTicker/LiveAuctionsTicker";
 import ActivityFeed from "../../components/ActivityFeed/ActivityFeed";
 import AIShowcase from "../../components/AIShowcase/AIShowcase";
+import FeatureShowcase3D from "../../components/FeatureShowcase3D/FeatureShowcase3D";
 import HowItWorksTimeline from "../../components/HowItWorksTimeline/HowItWorksTimeline";
 import styles from "./Home.module.css";
 
@@ -84,6 +85,8 @@ const Home = () => {
       </section>
 
       <AIShowcase />
+
+      <FeatureShowcase3D />
 
       <HowItWorksTimeline />
     </div>
