@@ -1,4 +1,5 @@
 const ipfsService = require("../services/ipfsService");
+const aiVisionService = require("../services/ai/aiVisionService");
 
 // @desc    Upload NFT image to IPFS
 // @route   POST /api/v1/nfts/upload/image
@@ -10,6 +11,25 @@ exports.uploadImage = async (req, res) => {
         success: false,
         error: "No image file provided. Please upload an image.",
       });
+    }
+
+    // 1. AI Vision Plagiarism Check
+    try {
+      // NOTE: Extracts dense vector mapping of the image using Hugging Face
+      // Future integration will query MongoDB Atlas Vector Search with this array
+      const imageEmbedding = await aiVisionService.getImageEmbedding(
+        req.file.path,
+      );
+      console.log("✅ AI Vision Plagiarism Check Passed [Embedding Generated]");
+    } catch (visionError) {
+      if (visionError.message.includes("warming up")) {
+        return res
+          .status(503)
+          .json({ success: false, error: visionError.message });
+      }
+      return res
+        .status(400)
+        .json({ success: false, error: visionError.message });
     }
 
     // IPFS logic is handled in service

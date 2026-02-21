@@ -1,0 +1,39 @@
+const axios = require("axios");
+const logger = require("../../utils/logger");
+
+class AIEmbeddingService {
+  /**
+   * Converts a text string (NFT description) into a vector array
+   * using the Google Gemini text-embedding-004 API.
+   * @param {String} text - The text to vectorize
+   * @returns {Array<Number>} - Floating-point vector embeddings
+   */
+  async generateTextEmbedding(text) {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      // Native free tier REST call
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`;
+
+      const response = await axios.post(
+        url,
+        {
+          model: "models/text-embedding-004",
+          content: {
+            parts: [{ text: text }],
+          },
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      // Return the array to be indexed into MongoDB Vector Search
+      return response.data.embedding.values;
+    } catch (error) {
+      logger.error(`AI Embedding Service Error: ${error.message}`);
+      throw new Error("Failed to generate vector embedding via Gemini API");
+    }
+  }
+}
+
+module.exports = new AIEmbeddingService();

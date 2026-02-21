@@ -1,6 +1,7 @@
 const NFT = require("../models/NFT");
 const blockchainService = require("./blockchainService");
 const axios = require("axios");
+const aiEmbeddingService = require("./ai/aiEmbeddingService");
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -31,7 +32,26 @@ const handleTransfer = async (from, to, tokenId, event) => {
         );
         // We continue so the DB record is still created even if IPFS is temporarily down
       }
-      // 4. Save to Database with the metadata included
+
+      // 4. Generate Semantic Vector Embedding via AI
+      let textEmbedding = [];
+      try {
+        const textToEmbed =
+          `${metadata.name || ""} ${metadata.description || ""} ${metadata.category || ""}`.trim();
+        if (textToEmbed) {
+          textEmbedding =
+            await aiEmbeddingService.generateTextEmbedding(textToEmbed);
+          console.log(
+            `✅ Generated AI Semantic Text Embedding for NFT #${tokenIdNum}`,
+          );
+        }
+      } catch (embeddingError) {
+        console.error(
+          `⚠️ Failed to generate AI Semantic Embedding: ${embeddingError.message}`,
+        );
+      }
+
+      // 5. Save to Database with the metadata included
       await NFT.create({
         tokenId: tokenIdNum,
         contractAddress: process.env.NFT_CONTRACT_ADDRESS.toLowerCase(),
@@ -43,6 +63,7 @@ const handleTransfer = async (from, to, tokenId, event) => {
         image: metadata.image || "", // usually another ipfs:// link
         attributes: metadata.attributes || [],
         category: "other", // Or pull from metadata if you stored it there
+        embedding: textEmbedding, // Store the vector array (optional field in schema)
       });
 
       console.log(`✅ Saved NFT #${tokenIdNum} with IPFS metadata to DB`);
