@@ -44,4 +44,14 @@ blockchainConfig.initialize()
     console.error(`Blockchain failed: ${err.message}`);
   });
 
+blockchainConfig.initialize()
+  .then(() => {
+    const { startEventListeners } = require('./services/eventListenerService');
+    startEventListeners();
+    console.log('Blockchain + listeners ready');
+  })
+  .catch(err => {
+    console.error(`Blockchain failed: ${err.message}`);
+  });
+
 module.exports = app;

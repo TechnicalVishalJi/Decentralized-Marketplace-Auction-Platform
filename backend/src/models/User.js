@@ -4,10 +4,10 @@ const userSchema = new mongoose.Schema(
   {
     walletAddress: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true, // Allows null/missing values since email users might not have a wallet yet
       lowercase: true,
-      index: true,
+      trim: true,
     },
     username: {
       type: String,
@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema(
       sparse: true,
       lowercase: true,
       trim: true,
+    },
+    password: {
+      type: String,
+      select: false, // Don't return password by default in queries
+      minlength: 6,
     },
     bio: {
       type: String,
@@ -52,5 +57,23 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ createdAt: -1 });
+
+// Hash password before saving if it was modified
+const bcrypt = require("bcryptjs");
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password") || !this.password) {
+    next();
+    return;
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// Method to verify password
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  if (!this.password) return false;
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);
