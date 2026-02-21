@@ -1,21 +1,35 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const nftController = require('../controllers/nftController');
-const { optionalAuth } = require('../middleware/auth');
+const nftController = require("../controllers/nftController");
+const ipfsController = require("../controllers/ipfsController");
+const { optionalAuth, protect } = require("../middleware/auth");
+const multer = require("multer");
+
+// Configure multer for temp file storage
+const upload = multer({ dest: "uploads/" });
+
+// -- POST routes for IPFS Uploads (Must be protected and before /:tokenId)
+router.post(
+  "/upload/image",
+  protect,
+  upload.single("image"),
+  ipfsController.uploadImage,
+);
+router.post("/upload/metadata", protect, ipfsController.uploadMetadata);
 
 // GET /api/v1/nfts/stats  ← Must be before /:tokenId
-router.get('/stats', nftController.getStats);
+router.get("/stats", nftController.getStats);
 
 // GET /api/v1/nfts/owner/:address  ← Must be before /:tokenId
-router.get('/owner/:address', nftController.getNFTsByOwner);
+router.get("/owner/:address", nftController.getNFTsByOwner);
 
 // GET /api/v1/nfts/creator/:address  ← Must be before /:tokenId
-router.get('/creator/:address', nftController.getNFTsByCreator);
+router.get("/creator/:address", nftController.getNFTsByCreator);
 
 // GET /api/v1/nfts  (optionalAuth: logged-in users could see liked status in future)
-router.get('/', optionalAuth, nftController.getAllNFTs);
+router.get("/", optionalAuth, nftController.getAllNFTs);
 
 // GET /api/v1/nfts/:tokenId  ← Must be LAST
-router.get('/:tokenId', optionalAuth, nftController.getNFT);
+router.get("/:tokenId", optionalAuth, nftController.getNFT);
 
 module.exports = router;
