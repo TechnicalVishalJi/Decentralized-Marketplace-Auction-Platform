@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import {
   FiDatabase,
   FiLock,
@@ -9,6 +10,8 @@ import {
   FiTrendingUp,
 } from "react-icons/fi";
 import styles from "./FeatureShowcase3D.module.css";
+
+gsap.registerPlugin(useGSAP);
 
 const features = [
   {
@@ -50,93 +53,105 @@ const features = [
 ];
 
 const FeatureShowcase3D = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef(null);
 
-  // Auto-rotate the showcase naturally
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % features.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
+  useGSAP(
+    () => {
+      const cards = gsap.utils.toArray("." + styles.card3d);
+
+      const masterTl = gsap.timeline({ repeat: -1 });
+
+      cards.forEach((card, i) => {
+        const tl = gsap.timeline();
+
+        // 1. Enter: Fast zoom-in from right while spinning exactly 5 full times (0 to 1800 deg).
+        // Using fromTo guarantees precise starting states. Starting at rotateY: 0 (front-facing) to 1800 (also front-facing).
+        tl.fromTo(
+          card,
+          { x: "100%", z: -500, opacity: 0, rotateY: 0, scale: 0.5 },
+          {
+            x: "10%",
+            z: 0,
+            opacity: 1,
+            rotateY: 1800, // Exactly 5 full spins
+            scale: 0.95, // scale slightly down
+            duration: 2.5,
+            ease: "circ.out", // smooth deceleration curve
+          },
+        );
+
+        // 2. Showcase Mode: Continuous float slightly left and explicit rotation drift.
+        // Easing changed to sine.inOut to smoothly accelerate out of the complete stop, and decelerate into the exit phase.
+        tl.to(card, {
+          rotateY: 1845,
+          x: "-10%",
+          scale: 1, // slightly pulse up to 1
+          duration: 3.5,
+          ease: "sine.inOut", // Seamless transition
+        });
+
+        // 3. Exit: Spin out very fast and shoot backward into the left (behind the text)
+        tl.to(card, {
+          rotateY: 1980, // Half turn on exit
+          x: "-150%", // Shoot far left
+          z: -300,
+          opacity: 0,
+          scale: 0.6,
+          duration: 1.2,
+          ease: "power3.in",
+        });
+
+        // Overlap the entrance of the NEXT card with the exit of the CURRENT card by 0.6 seconds for seamless flow
+        masterTl.add(tl, i === 0 ? 0 : "-=0.6");
+      });
+    },
+    { scope: containerRef },
+  );
 
   return (
-    <section className={styles.showcaseSection}>
+    <section className={styles.showcaseSection} ref={containerRef}>
+      {/* Absolute Glass Sidebar masking the exit path of the cards seamlessly */}
+      <div className={styles.glassBackdrop}></div>
+
       <div className={`container ${styles.layout}`}>
+        {/* Left Side: Text Content overlays the glass safe zone */}
         <div className={styles.textContent}>
-          <div className={styles.badge}>Portfolio Architecture</div>
+          <div className={styles.badge}>Live Ecosystem</div>
           <h2 className={styles.title}>
-            Powered by next-gen <br />
-            <span className="gradient-text">Web3 & AI Tech</span>
+            Powered by Next-Gen <br />
+            <span className="gradient-text">Web3 Technology</span>
           </h2>
           <p className={styles.subtitle}>
             This isn't just a UI wrapper. CryptoMarket is a fully functional
-            decentralized application combining the security of the blockchain
-            with the intelligence of modern AI microservices.
+            decentralized application built to showcase the integration of
+            hyper-fast L2 blockchain transactions with intelligent AI
+            microservices.
           </p>
+        </div>
 
-          <div className={styles.paginationList}>
-            {features.map((feat, idx) => (
-              <div
-                key={feat.id}
-                className={`${styles.pageItem} ${idx === activeIndex ? styles.activePage : ""}`}
-                onClick={() => setActiveIndex(idx)}
-              >
-                <div className={styles.pageIcon}>{feat.icon}</div>
-                <span>{feat.title}</span>
+        {/* Right Side: 3D Scene */}
+        <div className={styles.scene3d}>
+          <div className={styles.orb1}></div>
+          <div className={styles.orb2}></div>
+
+          {/* 3D Carousel Perspective constraints */}
+          <div className={styles.carouselContainer}>
+            {features.map((feature) => (
+              <div key={feature.id} className={styles.card3d}>
+                {/* PREVENT MIRRORED TEXT: Independent Front Face */}
+                <div className={styles.cardFront}>
+                  <div className={styles.cardIconBox}>{feature.icon}</div>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.desc}</p>
+                </div>
+
+                {/* Clean Glass Back Face */}
+                <div className={styles.cardBack}>
+                  <div className={styles.backplateLogo}>CM</div>
+                </div>
               </div>
             ))}
           </div>
-        </div>
-
-        <div className={styles.scene3d}>
-          <div className={styles.carouselContainer}>
-            <AnimatePresence mode="popLayout">
-              {features.map((feature, i) => {
-                if (i !== activeIndex) return null;
-
-                return (
-                  <motion.div
-                    key={feature.id}
-                    className={`glass-panel ${styles.card3d}`}
-                    initial={{ opacity: 0, rotateY: 90, scale: 0.8, z: -300 }}
-                    animate={{ opacity: 1, rotateY: 0, scale: 1, z: 0 }}
-                    exit={{ opacity: 0, rotateY: -90, scale: 0.8, z: -300 }}
-                    transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                  >
-                    <div className={styles.cardGlow}></div>
-                    <div className={styles.cardIconBox}>{feature.icon}</div>
-                    <h3>{feature.title}</h3>
-                    <p>{feature.desc}</p>
-
-                    <div className={styles.techNodes}>
-                      <div className={styles.node}></div>
-                      <div className={styles.line}></div>
-                      <div className={styles.node}></div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
-
-          {/* Decorative floating elements for the 3D scene */}
-          <motion.div
-            className={styles.floatingOrb1}
-            animate={{
-              y: [0, -20, 0],
-              rotate: [0, 360],
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div
-            className={styles.floatingOrb2}
-            animate={{
-              y: [0, 30, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
         </div>
       </div>
     </section>

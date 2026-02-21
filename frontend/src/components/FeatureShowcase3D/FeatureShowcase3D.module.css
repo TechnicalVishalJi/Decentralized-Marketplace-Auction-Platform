@@ -1,19 +1,41 @@
 .showcaseSection {
-    padding: 120px 0;
-    background-color: var(--color-bg-primary);
-    border-bottom: 1px solid var(--glass-border-solid);
-    overflow: hidden;
     position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    overflow: hidden;
+    background: var(--color-bg-primary);
+    border-bottom: 1px solid var(--glass-border-solid);
+}
+
+.glassBackdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 55vw;
+    z-index: 1;
+
+    /* Bright White Glass Effect */
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+
+    /* Feathered edge mask so there is no hard boundary splitting the screen on the right */
+    -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%);
+    mask-image: linear-gradient(to right, black 50%, transparent 100%);
 }
 
 .layout {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 64px;
+    justify-content: flex-end;
+    height: 100vh;
+    width: 100%;
 }
 
-/* Left Text Content */
 .textContent {
     flex: 1;
     max-width: 550px;
@@ -48,216 +70,186 @@
     margin-bottom: 40px;
 }
 
-.paginationList {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.pageItem {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 20px;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all var(--transition-smooth);
-    border: 1px solid transparent;
-    color: var(--color-text-secondary);
-    font-weight: 500;
-}
-
-.pageItem:hover {
-    background: rgba(255, 255, 255, 0.5);
-    transform: translateX(5px);
-}
-
-.activePage {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-accent);
-    color: var(--color-text-primary);
-    box-shadow: var(--shadow-sm);
-    transform: translateX(10px);
-}
-
-.activePage:hover {
-    transform: translateX(10px);
-    /* negate hover shift if already active */
-}
-
-.pageIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-}
-
-.activePage .pageIcon {
-    color: var(--color-accent);
-}
-
-/* Right 3D Scene */
 .scene3d {
     flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    /* cards push to the right */
     align-items: center;
-    perspective: 1200px;
-    /* Crucial for 3D effect */
+    perspective: 1500px;
     position: relative;
-    min-height: 500px;
-    transform-style: preserve-3d;
+    min-height: 600px;
+    width: 50vw;
+    padding-right: 5vw;
 }
 
+.orb1,
+.orb2 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.3;
+}
+
+.orb1 {
+    width: 400px;
+    height: 400px;
+    background: var(--color-accent);
+    top: 0;
+    left: 0;
+}
+
+.orb2 {
+    width: 300px;
+    height: 300px;
+    background: #EC4899;
+    bottom: 0;
+    right: 0;
+}
+
+/* 3D Carousel Container constrainer */
 .carouselContainer {
     position: relative;
     width: 100%;
-    max-width: 400px;
-    aspect-ratio: 3/4;
-    z-index: 5;
+    max-width: 380px;
+    height: 480px;
+    z-index: 2;
     transform-style: preserve-3d;
 }
 
+/* Base Card CSS. Initial invisibility and transformations handled by GSAP strictly */
 .card3d {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    padding: 40px;
+
+    /* VERY IMPORTANT FOR 3D FACES */
+    transform-style: preserve-3d;
+    opacity: 0;
+    /* GSAP reveals it */
+    will-change: transform, opacity;
+}
+
+.cardFront,
+.cardBack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 40px;
+
+    /* Crucial to stop mirrored rotation */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.4);
+}
+
+.cardFront {
+    padding: 50px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
-    border-radius: 32px;
-    /* Transform origin changes how it swings in */
-    transform-origin: center right;
-    overflow: hidden;
+    transform: rotateY(0deg);
 }
 
-.cardGlow {
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
-    z-index: 0;
-    pointer-events: none;
+.cardBack {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: rotateY(180deg);
+    /* Render back physically on the rear */
+}
+
+.backplateLogo {
+    font-size: 8rem;
+    font-weight: 900;
+    color: rgba(99, 102, 241, 0.15);
+    font-family: var(--font-heading);
 }
 
 .cardIconBox {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 28px;
     background: linear-gradient(135deg, var(--color-accent) 0%, #8B5CF6 100%);
     color: white;
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 32px;
-    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-    position: relative;
-    z-index: 1;
+    margin-bottom: 36px;
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
 }
 
-.card3d h3 {
-    font-size: 1.8rem;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
+.cardFront h3 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    background: var(--gradient-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
 }
 
-.card3d p {
+.cardFront p {
     color: var(--color-text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.6;
-    position: relative;
-    z-index: 1;
-}
-
-.techNodes {
-    position: absolute;
-    bottom: 40px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0.5;
-}
-
-.node {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--color-accent);
-}
-
-.line {
-    width: 40px;
-    height: 2px;
-    background: var(--color-accent);
-}
-
-/* Floating Elements */
-.floatingOrb1 {
-    position: absolute;
-    top: 10%;
-    right: 10%;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-    filter: blur(40px);
-    opacity: 0.4;
-    z-index: 1;
-}
-
-.floatingOrb2 {
-    position: absolute;
-    bottom: 0%;
-    left: 0%;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
-    filter: blur(50px);
-    opacity: 0.3;
-    z-index: 1;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    font-weight: 500;
 }
 
 @media (max-width: 1024px) {
     .layout {
         flex-direction: column;
         text-align: center;
-    }
-
-    .textContent {
-        max-width: 100%;
-    }
-
-    .paginationList {
-        flex-direction: row;
-        flex-wrap: wrap;
         justify-content: center;
     }
 
-    .activePage,
-    .pageItem:hover {
-        transform: translateY(-5px) translateX(0);
+    .glassBackdrop {
+        width: 100%;
+        -webkit-mask-image: none;
+        mask-image: none;
     }
 
-    .activePage:hover {
-        transform: translateY(-5px) translateX(0);
+    .textContent {
+        margin-bottom: 40px;
+        padding: 20px;
+    }
+
+    .scene3d {
+        width: 100%;
+        justify-content: center;
+        padding-right: 0;
     }
 }
 
 @media (max-width: 600px) {
-    .title {
+    .carouselContainer {
+        max-width: 90%;
+        height: 480px;
+    }
+
+    .cardFront h3 {
+        font-size: 1.8rem;
+    }
+
+    .cardFront p {
+        font-size: 1.05rem;
+    }
+
+    .cardIconBox {
+        width: 80px;
+        height: 80px;
         font-size: 2.5rem;
     }
 }
