@@ -2,12 +2,14 @@ import React from "react";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import NFTCard from "../../components/NFTCard/NFTCard";
 import LiveAuctionsTicker from "../../components/LiveAuctionsTicker/LiveAuctionsTicker";
-import ActivityFeed from "../../components/ActivityFeed/ActivityFeed";
 import AIShowcase from "../../components/AIShowcase/AIShowcase";
 import FeatureShowcase3D from "../../components/FeatureShowcase3D/FeatureShowcase3D";
 import HowItWorksTimeline from "../../components/HowItWorksTimeline/HowItWorksTimeline";
 import CallToAction from "../../components/CallToAction/CallToAction";
 import styles from "./Home.module.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 
 // Mock Data for UI Designing Phase
 const mockNFTs = [
@@ -45,6 +47,11 @@ const mockNFTs = [
   },
 ];
 
+const extendedMockNFTs = [
+  ...mockNFTs,
+  ...mockNFTs.map((nft) => ({ ...nft, id: nft.id + 4 })),
+];
+
 const Home = () => {
   return (
     <div className="page-transition-enter-active">
@@ -53,35 +60,46 @@ const Home = () => {
       <LiveAuctionsTicker />
 
       <section className={styles.trendingSection}>
-        <div className={`container ${styles.mainContentLayout}`}>
-          {/* Main 2/3 Column: Trending Grid */}
-          <div className={styles.trendingSide}>
-            <div className={styles.sectionHeader}>
-              <h2>
-                Trending <span className="gradient-text">Auctions</span>
-              </h2>
-              <button
-                className="btn-primary"
-                style={{
-                  background: "var(--color-bg-secondary)",
-                  color: "var(--color-text-primary)",
-                }}
-              >
-                View All
-              </button>
-            </div>
-
-            <div className={styles.nftGrid}>
-              {mockNFTs.map((nft) => (
-                <NFTCard key={nft.id} nft={nft} />
-              ))}
-            </div>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <h2>
+              Trending <span className="gradient-text">Auctions</span>
+            </h2>
+            <button
+              className="btn-primary"
+              style={{
+                background: "var(--color-bg-secondary)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              View All
+            </button>
           </div>
 
-          {/* Side 1/3 Column: Activity Feed */}
-          <div className={styles.feedSide}>
-            <ActivityFeed />
-          </div>
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={32}
+            slidesPerView={1}
+            breakpoints={{
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            centeredSlides={true}
+            loop={true}
+            speed={800}
+            autoplay={{
+              delay: 2000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            className={styles.carouselSwiper}
+          >
+            {extendedMockNFTs.map((nft) => (
+              <SwiperSlide key={nft.id} className={styles.carouselSlide}>
+                <NFTCard nft={nft} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </section>
 

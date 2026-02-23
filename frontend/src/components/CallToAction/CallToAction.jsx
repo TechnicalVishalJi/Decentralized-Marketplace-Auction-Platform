@@ -5,8 +5,59 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+const TypeText = ({ text, delayOffset = 0, className = "" }) => {
+  const words = text.split(" ");
+  let charCount = 0;
+  return (
+    <span className={className}>
+      {words.map((word, wordIndex) => {
+        const wordNode = (
+          <span key={`word-${wordIndex}`} style={{ display: "inline-block" }}>
+            {word.split("").map((char, charIndex) => {
+              const currentDelay = delayOffset + charCount * 0.04;
+              charCount++;
+              return (
+                <motion.span
+                  key={charIndex}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.01, delay: currentDelay }}
+                >
+                  {char}
+                </motion.span>
+              );
+            })}
+          </span>
+        );
+
+        if (wordIndex < words.length - 1) {
+          const spaceDelay = delayOffset + charCount * 0.04;
+          charCount++;
+          return (
+            <React.Fragment key={`frag-${wordIndex}`}>
+              {wordNode}
+              <motion.span
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.01, delay: spaceDelay }}
+              >
+                {" "}
+              </motion.span>
+            </React.Fragment>
+          );
+        }
+
+        return wordNode;
+      })}
+    </span>
+  );
+};
 
 const CallToAction = () => {
   const ctaRef = useRef(null);
@@ -74,19 +125,54 @@ const CallToAction = () => {
           <div className={styles.shine}></div>
 
           <div className={styles.content}>
-            <div className={styles.badge}>
+            <motion.div
+              className={styles.badge}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            >
               <FiZap className={styles.badgeIcon} /> Unleash the Power of L2
-            </div>
+            </motion.div>
+
             <h2 className={styles.title}>
-              Ready to Shape the Future of <br />
-              <span className="gradient-text">Digital Assets?</span>
+              <TypeText
+                text="Ready to Shape the Future of "
+                delayOffset={0.6}
+              />
+              <br />
+              <TypeText
+                text="Digital Assets?"
+                delayOffset={0.6 + 29 * 0.04}
+                className="gradient-text"
+              />
             </h2>
-            <p className={styles.subtitle}>
+
+            <motion.p
+              className={styles.subtitle}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 2.2, ease: "easeOut" }}
+            >
               Join thousands of creators, collectors, and investors building the
               next generation Web3 AI economy on CryptoMarket. Experience
               instant finality, zero gas, and bleeding-edge AI generation.
-            </p>
-            <div className={styles.buttonGroup}>
+            </motion.p>
+
+            <motion.div
+              className={styles.buttonGroup}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.8,
+                delay: 2.5,
+                type: "spring",
+                stiffness: 100,
+                damping: 12,
+              }}
+            >
               <Link to="/explore" className={styles.primaryBtn}>
                 Launch App <FiArrowRight className={styles.icon} />
                 <div className={styles.btnGlow}></div>
@@ -99,7 +185,7 @@ const CallToAction = () => {
               >
                 Join Discord <FiMessageSquare className={styles.icon} />
               </a>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

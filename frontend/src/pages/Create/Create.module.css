@@ -69,8 +69,8 @@
 }
 
 .activeTab:hover {
+    background: var(--gradient-primary);
     color: white;
-    /* Maintain white on hover */
 }
 
 /* Media Box */

@@ -1,17 +1,24 @@
 const jwt = require("jsonwebtoken");
 const { ethers } = require("ethers");
 const User = require("../models/User");
+const OTP = require("../models/OTP");
+const emailService = require("./emailService");
 
 class AuthService {
   // Step 1: Generate a nonce for the wallet to sign
-  async generateNonce(walletAddress) {
+  async generateNonce(walletAddress, forLinking = false) {
     const address = walletAddress.toLowerCase();
 
-    // Find existing user or create new one
+    // Find existing user with this wallet address
     let user = await User.findOne({ walletAddress: address });
 
     if (!user) {
-      // First time login - create user
+      if (forLinking) {
+        // When linking: the wallet isn't registered yet, so we DON'T create a new user.
+        // Just return a random nonce — the linkWallet flow will use the CURRENT user's nonce.
+        return Math.floor(Math.random() * 1000000).toString();
+      }
+      // Fresh MetaMask signup: create a minimal placeholder user record to store the nonce
       user = await User.create({
         walletAddress: address,
         nonce: Math.floor(Math.random() * 1000000).toString(),
@@ -53,25 +60,65 @@ class AuthService {
     return { token, user };
   }
 
-  // --- NEW EMAIL/PASSWORD METHODS ---
+  // --- NEW EMAIL/PASSWORD OTP METHODS ---
 
-  // Register with email and password
-  async registerWithEmail(username, email, password) {
+  // Step 1: Initiate signup by sending OTP
+  async initiateSignupOTP(email) {
+    const emailLower = email.toLowerCase();
+
     // Check if user already exists
-    const userExists = await User.findOne({
-      $or: [{ email: email.toLowerCase() }, { username }],
+    const userExists = await User.findOne({ email: emailLower });
+    if (userExists) {
+      throw new Error("User with that email already exists");
+    }
+
+    // Generate 6 digit OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save to database (will be hashed by pre-save hook and expires in 5 mins)
+    await OTP.create({ email: emailLower, otp: otpCode });
+
+    // Send email via Brevo
+    await emailService.sendOTP(emailLower, otpCode);
+
+    return { message: "OTP sent successfully" };
+  }
+
+  // Step 2: Verify OTP and create user
+  async verifySignupOTP(email, otp, username, password) {
+    const emailLower = email.toLowerCase();
+
+    // Find the most recent OTP for this email
+    const otpRecord = await OTP.findOne({ email: emailLower }).sort({
+      createdAt: -1,
     });
 
-    if (userExists) {
-      throw new Error("User with that email or username already exists");
+    if (!otpRecord) {
+      throw new Error("OTP expired or not found");
+    }
+
+    // Verify OTP
+    const isMatch = await otpRecord.matchOTP(otp);
+    if (!isMatch) {
+      throw new Error("Invalid OTP");
+    }
+
+    // Check username availability
+    if (username) {
+      const usernameExists = await User.findOne({ username });
+      if (usernameExists) throw new Error("Username already taken");
     }
 
     // Create user (password hashing is handled by User.js pre-save hook)
     const user = await User.create({
       username,
-      email: email.toLowerCase(),
+      email: emailLower,
       password,
+      authProvider: "email",
     });
+
+    // Delete the used OTP record
+    await OTP.deleteOne({ _id: otpRecord._id });
 
     const token = this.generateToken(user._id, user.walletAddress);
 
@@ -104,8 +151,49 @@ class AuthService {
     return { token, user };
   }
 
-  // Link a wallet to an existing account
-  async linkWallet(userId, walletAddress, signature) {
+  // MetaMask Signup (Requires email)
+  async metamaskSignup(walletAddress, signature, email, username) {
+    const address = walletAddress.toLowerCase();
+    const emailLower = email.toLowerCase();
+
+    // Check if user already exists with this wallet
+    const walletExists = await User.findOne({ walletAddress: address });
+    if (walletExists) throw new Error("Wallet is already registered");
+
+    // Check if email already exists
+    const emailExists = await User.findOne({ email: emailLower });
+    if (emailExists)
+      throw new Error(
+        "Email is already registered. Please login with email and link your wallet.",
+      );
+
+    // We must verify the signature using a dummy user nonce (handled differently for first time)
+    // Actually, for signup, the frontend fetches a nonce for a new unknown address, creating a barebones user.
+    const user = await User.findOne({ walletAddress: address });
+    if (!user) throw new Error("Please request a nonce first");
+
+    const message = `Sign this message to login to NFT Marketplace.\n\nNonce: ${user.nonce}`;
+    const recoveredAddress = ethers.verifyMessage(message, signature);
+
+    if (recoveredAddress.toLowerCase() !== address) {
+      throw new Error("Invalid signature. Authentication failed.");
+    }
+
+    // Complete the user profile
+    user.email = emailLower;
+    if (username) user.username = username;
+    user.authProvider = "metamask";
+    user.nonce = Math.floor(Math.random() * 1000000).toString(); // invalidate
+    await user.save();
+
+    const token = this.generateToken(user._id, address);
+
+    return { token, user };
+  }
+
+  // Link a wallet to an existing email account
+  // Signature verification is skipped: the user is already authenticated via JWT.
+  async linkWallet(userId, walletAddress) {
     const address = walletAddress.toLowerCase();
 
     const user = await User.findById(userId);
@@ -115,28 +203,21 @@ class AuthService {
       throw new Error("Account already has a linked wallet");
     }
 
-    // Check if wallet is already linked to another account
+    // Check if this wallet is already linked to another real account
     const walletExists = await User.findOne({ walletAddress: address });
-    if (walletExists) {
-      throw new Error("Wallet is already linked to another account");
+    if (walletExists && walletExists._id.toString() !== userId.toString()) {
+      // Auto-delete orphan ghost users (wallet-only record, no email or password)
+      const isGhost = !walletExists.email && !walletExists.password;
+      if (isGhost) {
+        await User.deleteOne({ _id: walletExists._id });
+      } else {
+        throw new Error("Wallet is already linked to another account");
+      }
     }
 
-    // Recreate the exact message that was signed on frontend
-    const message = `Sign this message to link your wallet to NFT Marketplace.\n\nNonce: ${user.nonce}`;
-
-    // Recover the address from the signature
-    const recoveredAddress = ethers.verifyMessage(message, signature);
-
-    // Check if recovered address matches claimed address
-    if (recoveredAddress.toLowerCase() !== address) {
-      throw new Error("Invalid signature. Link failed.");
-    }
-
-    // Update user with wallet address
+    // Link the wallet and refresh nonce
     user.walletAddress = address;
-    // Invalidate nonce
     user.nonce = Math.floor(Math.random() * 1000000).toString();
-
     await user.save();
 
     // Generate fresh token that includes the new wallet address
@@ -149,7 +230,6 @@ class AuthService {
   generateToken(userId, walletAddress) {
     return jwt.sign(
       {
-        id: userId,
         id: userId,
         // Include walletAddress only if it exists
         ...(walletAddress && { walletAddress: walletAddress.toLowerCase() }),

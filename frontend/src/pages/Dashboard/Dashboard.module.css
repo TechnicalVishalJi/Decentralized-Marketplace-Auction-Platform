@@ -1,0 +1,224 @@
+.dashboardPage {
+    min-height: 100vh;
+    padding-top: 80px;
+    /* Account for navbar */
+    background-color: var(--color-bg-primary);
+}
+
+/* Sidebar Profile */
+.sidebarProfile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: white;
+    border: 1px solid var(--glass-border-solid);
+    border-radius: var(--radius-lg);
+    padding: 32px 16px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+.avatarWrapper {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: white;
+    padding: 6px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 16px;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-bg-secondary);
+}
+
+.avatarPlaceholder {
+    width: 100%;
+    height: 100%;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.username {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.badges {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.badge {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--color-accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    display: inline-block;
+}
+
+/* Main Layout */
+.dashboardMain {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    padding: 60px 0 !important;
+}
+
+/* Sidebar */
+.sidebar {
+    position: sticky;
+    top: 120px;
+    height: fit-content;
+}
+
+.sideNav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: white;
+    border: 1px solid var(--glass-border-solid);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: left;
+}
+
+.navIcon {
+    font-size: 1.2rem;
+}
+
+.navItem:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+.navItem.active {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--color-accent);
+}
+
+/* Content Area */
+.contentArea {
+    min-height: 500px;
+}
+
+.tabContent h3 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: var(--color-text-primary);
+}
+
+.tabDescription {
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 32px;
+}
+
+/* Empty State */
+.emptyState {
+    background: white;
+    border: 1px dashed var(--glass-border-solid);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    text-align: center;
+}
+
+.emptyStateIcon {
+    width: 96px;
+    height: 96px;
+    background: var(--color-bg-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+}
+
+.emptyState h4 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.emptyState p {
+    color: var(--color-text-secondary);
+    margin-bottom: 32px;
+    max-width: 400px;
+}
+
+.emptyStateActions {
+    display: flex;
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .dashboardMain {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: relative;
+        top: 0;
+    }
+
+    .sideNav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px;
+    }
+
+    .navItem {
+        white-space: nowrap;
+        padding: 10px 16px;
+    }
+
+    .avatarWrapper {
+        width: 80px;
+        height: 80px;
+    }
+
+    .username {
+        font-size: 1.2rem;
+    }
+}

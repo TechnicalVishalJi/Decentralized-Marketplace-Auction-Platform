@@ -12,12 +12,12 @@ class AIEmbeddingService {
     try {
       const apiKey = process.env.GEMINI_API_KEY;
       // Native free tier REST call
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-001:embedContent?key=${apiKey}`;
 
       const response = await axios.post(
         url,
         {
-          model: "models/text-embedding-004",
+          model: "models/text-embedding-001",
           content: {
             parts: [{ text: text }],
           },

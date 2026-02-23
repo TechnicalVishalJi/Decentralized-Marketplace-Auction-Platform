@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiSearch, FiMenu, FiX, FiUser } from "react-icons/fi";
+import { FiSearch, FiMenu, FiX, FiUser, FiLogOut } from "react-icons/fi";
 import styles from "./Navbar.module.css";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
 
   // Handle transparent to glassmorphic transition on scroll
   useEffect(() => {
@@ -33,7 +35,6 @@ const Navbar = () => {
   const navLinks = [
     { label: "Home", path: "/" },
     { label: "Explore", path: "/explore" },
-    { label: "Create", path: "/create" },
     { label: "About", path: "/about" },
   ];
 
@@ -78,15 +79,38 @@ const Navbar = () => {
 
           <div className={styles.divider}></div>
 
-          {/* LOGIN / AVATAR BUTTON */}
-          {/* Will make dynamic with AuthContext later */}
-          <Link
-            to="/auth"
-            className="btn-primary"
-            style={{ display: "flex", alignItems: "center", gap: "8px" }}
-          >
-            <FiUser /> Login
-          </Link>
+          {/* LOGIN / AVATAR / DASHBOARD BUTTON */}
+          {isAuthenticated ? (
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <Link
+                to="/dashboard"
+                className={styles.navLink}
+                style={{ fontWeight: 600, color: "var(--color-accent)" }}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={logout}
+                className="btn-secondary"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 16px",
+                }}
+              >
+                <FiLogOut /> Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/auth"
+              className="btn-primary"
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <FiUser /> Login
+            </Link>
+          )}
         </div>
 
         {/* MOBILE MENU TOGGLE */}
@@ -124,13 +148,40 @@ const Navbar = () => {
           </Link>
         ))}
 
-        <Link
-          to="/auth"
-          className={`btn-primary ${styles.mobileLoginBtn}`}
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <FiUser /> Login
-        </Link>
+        {isAuthenticated ? (
+          <>
+            <Link
+              to="/dashboard"
+              className={`${styles.mobileNavLink} ${location.pathname === "/dashboard" ? styles.active : ""}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+            <button
+              className={`btn-secondary ${styles.mobileLoginBtn}`}
+              onClick={() => {
+                logout();
+                setMobileMenuOpen(false);
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                justifyContent: "center",
+              }}
+            >
+              <FiLogOut /> Logout
+            </button>
+          </>
+        ) : (
+          <Link
+            to="/auth"
+            className={`btn-primary ${styles.mobileLoginBtn}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <FiUser /> Login
+          </Link>
+        )}
       </div>
     </nav>
   );

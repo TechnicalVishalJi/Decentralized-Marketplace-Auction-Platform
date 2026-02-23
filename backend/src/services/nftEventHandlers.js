@@ -1,7 +1,10 @@
 const NFT = require("../models/NFT");
 const blockchainService = require("./blockchainService");
 const axios = require("axios");
-const aiEmbeddingService = require("./ai/aiEmbeddingService");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+const aiVisionService = require("./ai/aiVisionService");
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -14,13 +17,14 @@ const handleTransfer = async (from, to, tokenId, event) => {
     // Case 1: Mint (from = zero address)
     if (fromAddr === ZERO_ADDRESS) {
       console.log(`🎨 NFT #${tokenIdNum} minted to ${toAddr}`);
-      // 1. Get standard URI from contract (usually looks like: ipfs://QmHash...)
+
+      // 1. Get token URI from chain
       const tokenURI = await blockchainService.getTokenURI(tokenIdNum);
-      // 2. Convert standard IPFS link to an HTTP Gateway link so axios can fetch it
       const httpTokenURI = tokenURI.startsWith("ipfs://")
         ? tokenURI.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/")
         : tokenURI;
-      // 3. Fetch the JSON metadata via Axios
+
+      // 2. Fetch JSON metadata
       let metadata = {};
       try {
         const response = await axios.get(httpTokenURI);
@@ -30,43 +34,69 @@ const handleTransfer = async (from, to, tokenId, event) => {
           `⚠️ Failed to fetch IPFS metadata for #${tokenIdNum}:`,
           ipfsError.message,
         );
-        // We continue so the DB record is still created even if IPFS is temporarily down
       }
 
-      // 4. Generate Semantic Vector Embedding via AI
-      let textEmbedding = [];
-      try {
-        const textToEmbed =
-          `${metadata.name || ""} ${metadata.description || ""} ${metadata.category || ""}`.trim();
-        if (textToEmbed) {
-          textEmbedding =
-            await aiEmbeddingService.generateTextEmbedding(textToEmbed);
-          console.log(
-            `✅ Generated AI Semantic Text Embedding for NFT #${tokenIdNum}`,
+      // 3. Download the actual image and generate an IMAGE embedding for plagiarism detection
+      let imageEmbedding = [];
+      const imageIpfsUrl = (metadata.image || "").startsWith("ipfs://")
+        ? metadata.image.replace(
+            "ipfs://",
+            "https://gateway.pinata.cloud/ipfs/",
+          )
+        : metadata.image;
+
+      if (imageIpfsUrl) {
+        let tempImagePath = null;
+        try {
+          // Download image as buffer
+          const imageResponse = await axios.get(imageIpfsUrl, {
+            responseType: "arraybuffer",
+          });
+          const imageBuffer = Buffer.from(imageResponse.data);
+
+          // Write to OS temp file so aiVisionService can read it from disk
+          tempImagePath = path.join(
+            os.tmpdir(),
+            `nft_${tokenIdNum}_${Date.now()}.jpg`,
           );
+          fs.writeFileSync(tempImagePath, imageBuffer);
+
+          // Generate image embedding via Groq Vision + Gemini
+          imageEmbedding =
+            await aiVisionService.getImageEmbedding(tempImagePath);
+          console.log(
+            `✅ Generated image embedding for NFT #${tokenIdNum} (${imageEmbedding.length} dims)`,
+          );
+        } catch (embeddingError) {
+          console.error(
+            `⚠️ Failed to generate image embedding: ${embeddingError.message}`,
+          );
+        } finally {
+          // Always clean up the temp file
+          if (tempImagePath && fs.existsSync(tempImagePath)) {
+            fs.unlinkSync(tempImagePath);
+          }
         }
-      } catch (embeddingError) {
-        console.error(
-          `⚠️ Failed to generate AI Semantic Embedding: ${embeddingError.message}`,
-        );
       }
 
-      // 5. Save to Database with the metadata included
+      // 4. Save NFT record to MongoDB with the image embedding
       await NFT.create({
         tokenId: tokenIdNum,
         contractAddress: process.env.NFT_CONTRACT_ADDRESS.toLowerCase(),
         owner: toAddr,
         creator: toAddr,
-        tokenURI: tokenURI, // Keep original standard URI in DB
+        tokenURI,
         name: metadata.name || `NFT #${tokenIdNum}`,
         description: metadata.description || "",
-        image: metadata.image || "", // usually another ipfs:// link
+        image: metadata.image || "",
         attributes: metadata.attributes || [],
-        category: "other", // Or pull from metadata if you stored it there
-        embedding: textEmbedding, // Store the vector array (optional field in schema)
+        category: metadata.category || "other",
+        embedding: imageEmbedding, // Image embedding stored for plagiarism vector search
       });
 
-      console.log(`✅ Saved NFT #${tokenIdNum} with IPFS metadata to DB`);
+      console.log(
+        `✅ Saved NFT #${tokenIdNum} to DB with ${imageEmbedding.length > 0 ? "image embedding ✓" : "no embedding (skipped)"}`,
+      );
       return;
     }
 
@@ -77,7 +107,7 @@ const handleTransfer = async (from, to, tokenId, event) => {
       return;
     }
 
-    // Case 3: Regular transfer - just update owner
+    // Case 3: Regular transfer — just update owner
     console.log(
       `🔄 NFT #${tokenIdNum} transferred from ${fromAddr} to ${toAddr}`,
     );

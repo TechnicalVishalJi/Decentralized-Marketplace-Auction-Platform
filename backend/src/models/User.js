@@ -50,6 +50,11 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    authProvider: {
+      type: String,
+      enum: ["email", "metamask"],
+      default: "email",
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt automatically

@@ -187,6 +187,42 @@
     font-size: 1.1rem;
 }
 
+.errorMessage {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.backBtn {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--glass-border-solid);
+    padding: 12px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.backBtn:hover:not(:disabled) {
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+.backBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 @media (max-width: 900px) {
     .authContainer {
         flex-direction: column;
