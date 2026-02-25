@@ -139,13 +139,23 @@ const AuctionCard = ({ auction, nftMap, onClick }) => {
             borderRadius: 20,
             fontSize: "0.75rem",
             fontWeight: 600,
-            background: expired
-              ? "rgba(107,114,128,0.15)"
-              : "rgba(99,102,241,0.12)",
-            color: expired ? "#9ca3af" : "var(--color-accent)",
+            background: auction.cancelled
+              ? "rgba(239,68,68,0.12)"
+              : expired
+                ? "rgba(107,114,128,0.15)"
+                : "rgba(99,102,241,0.12)",
+            color: auction.cancelled
+              ? "#ef4444"
+              : expired
+                ? "#9ca3af"
+                : "var(--color-accent)",
           }}
         >
-          {expired ? "⏰ Ended" : `⏳ ${label}`}
+          {auction.cancelled
+            ? "❌ Cancelled"
+            : expired
+              ? "⏰ Ended"
+              : `⏳ ${label}`}
         </span>
         <p
           style={{
@@ -295,9 +305,31 @@ const DashboardSell = () => {
     durationDays: "0",
     durationHours: "1",
   });
+  const [useBalance, setUseBalance] = useState(false); // pay fee from platform balance?
+  const [platformBalance, setPlatformBalance] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  /* ── fetch platform balance ── */
+  useEffect(() => {
+    if (!user?.walletAddress || !window.ethereum) return;
+    const fetchPlatBal = async () => {
+      try {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const contract = new ethers.Contract(
+          MARKETPLACE_CONTRACT_ADDRESS,
+          MARKETPLACE_ABI.abi,
+          provider,
+        );
+        const bal = await contract.getBalanceOfUser(user.walletAddress);
+        setPlatformBalance(bal);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchPlatBal();
+  }, [user]);
 
   /* ── fetch owned NFTs ── */
   useEffect(() => {
@@ -335,8 +367,20 @@ const DashboardSell = () => {
       ]);
       const listings = listRes.data.data || [];
       const auctions = aucRes.data.data || [];
-      setMyListings(listings);
-      setMyAuctions(auctions);
+      setMyListings(
+        listings.sort((a, b) => {
+          const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          return timeB - timeA || b.listingId - a.listingId;
+        }),
+      );
+      setMyAuctions(
+        auctions.sort((a, b) => {
+          const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          return timeB - timeA || b.auctionId - a.auctionId;
+        }),
+      );
 
       /* build tokenId → nft lookup from owned NFTs + fetch missing ones */
       const map = {};
@@ -423,13 +467,15 @@ const DashboardSell = () => {
       const priceWei = ethers.parseEther(formData.price.toString());
 
       if (sellMode === "fixed") {
-        // Read the listing fee from the contract and send it as msg.value
-        const listingFee = await marketplaceContract.listingFee();
+        // If useBalance=true, fee comes from platform balance (no msg.value needed)
+        const listingFee = useBalance
+          ? 0n
+          : await marketplaceContract.listingFee();
         const tx = await marketplaceContract.listNFT(
           NFT_CONTRACT_ADDRESS,
           selectedNFT.tokenId,
           priceWei,
-          false, // useBalance = pay fee in ETH, not from deposited balance
+          useBalance, // true = deduct fee from platform balance, false = pay from wallet
           { value: listingFee },
         );
         await tx.wait();
@@ -438,14 +484,15 @@ const DashboardSell = () => {
         );
       } else {
         const durationSeconds = totalHours * 3600;
-        // Read the auction fee and send it as msg.value
-        const auctionFee = await marketplaceContract.auctionFee();
+        const auctionFee = useBalance
+          ? 0n
+          : await marketplaceContract.auctionFee();
         const tx = await marketplaceContract.createAuction(
           NFT_CONTRACT_ADDRESS,
           selectedNFT.tokenId,
           priceWei,
           durationSeconds,
-          false, // useBalance = pay fee in ETH, not from deposited balance
+          useBalance, // true = deduct fee from platform balance, false = pay from wallet
           { value: auctionFee },
         );
         await tx.wait();
@@ -466,6 +513,27 @@ const DashboardSell = () => {
   };
 
   /* ── render ── */
+  const now = Date.now();
+  const activeListedTokens = new Set([
+    ...myListings.filter((l) => l.active).map((l) => l.tokenId),
+    ...myAuctions
+      .filter((a) => {
+        if (!a.active) return false;
+        const endTime = new Date(a.endTime).getTime();
+        const isExpired = now >= endTime;
+        const hasBids = a.highestBid && String(a.highestBid) !== "0";
+
+        if (!isExpired) return true; // Still running
+        if (isExpired && hasBids && !a.claimed) return true; // Pending claim from winner
+
+        return false; // Expired with no bids
+      })
+      .map((a) => a.tokenId),
+  ]);
+  const availableNFTs = ownedNFTs.filter(
+    (nft) => !activeListedTokens.has(nft.tokenId),
+  );
+
   return (
     <div className={styles.tabContent}>
       <h3>Sell Items</h3>
@@ -553,9 +621,9 @@ const DashboardSell = () => {
               <p style={{ color: "var(--color-text-secondary)" }}>
                 Loading your NFTs…
               </p>
-            ) : ownedNFTs.length === 0 ? (
+            ) : availableNFTs.length === 0 ? (
               <p style={{ color: "var(--color-text-secondary)" }}>
-                You don't own any NFTs yet.
+                You don't own any available NFTs.
               </p>
             ) : (
               <div
@@ -565,7 +633,7 @@ const DashboardSell = () => {
                   gap: 10,
                 }}
               >
-                {ownedNFTs.map((nft) => (
+                {availableNFTs.map((nft) => (
                   <div
                     key={nft.tokenId}
                     onClick={() => setSelectedNFT(nft)}
@@ -831,6 +899,101 @@ const DashboardSell = () => {
                 {selectedNFT.tokenId})
               </div>
             )}
+
+            {/* ── Payment Method ── */}
+            <div style={{ marginBottom: 14 }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "0.88rem",
+                  fontWeight: 600,
+                  marginBottom: 8,
+                }}
+              >
+                Fee Payment Method
+              </label>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setUseBalance(false)}
+                  style={{
+                    flex: 1,
+                    padding: "8px 6px",
+                    borderRadius: "var(--radius-md)",
+                    border: `2px solid ${!useBalance ? "var(--color-accent)" : "var(--glass-border-solid)"}`,
+                    background: !useBalance
+                      ? "rgba(99,102,241,0.1)"
+                      : "transparent",
+                    cursor: "pointer",
+                    color: !useBalance
+                      ? "var(--color-accent)"
+                      : "var(--color-text-secondary)",
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                    transition: "all 0.2s",
+                  }}
+                >
+                  🦊 MetaMask Wallet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUseBalance(true)}
+                  style={{
+                    flex: 1,
+                    padding: "8px 6px",
+                    borderRadius: "var(--radius-md)",
+                    border: `2px solid ${useBalance ? "var(--color-success)" : "var(--glass-border-solid)"}`,
+                    background: useBalance
+                      ? "rgba(34,197,94,0.08)"
+                      : "transparent",
+                    cursor: "pointer",
+                    color: useBalance
+                      ? "var(--color-success)"
+                      : "var(--color-text-secondary)",
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                    transition: "all 0.2s",
+                  }}
+                >
+                  ⚡ Platform Balance
+                </button>
+              </div>
+              {useBalance && (
+                <div style={{ marginTop: 8 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "0.78rem",
+                      color:
+                        platformBalance && BigInt(platformBalance) > 0n
+                          ? "var(--color-success)"
+                          : "#f59e0b",
+                    }}
+                  >
+                    {platformBalance !== null
+                      ? `Available: ${parseFloat(ethers.formatEther(platformBalance)).toFixed(6)} ETH`
+                      : "Checking balance…"}
+                    {platformBalance !== null &&
+                      BigInt(platformBalance) === 0n &&
+                      " — deposit ETH first in Platform Wallet tab."}
+                  </p>
+                  <p
+                    style={{
+                      margin: "4px 0 0",
+                      fontSize: "0.7rem",
+                      color: "var(--color-text-secondary)",
+                    }}
+                  >
+                    <i>
+                      Note: MetaMask will still open to pay the network Gas fee
+                      (which is required by the blockchain), but the
+                      listing/auction fee itself will be 0 ETH in the
+                      transaction.
+                    </i>
+                  </p>
+                </div>
+              )}
+            </div>
 
             {/* Submit button */}
             <button

@@ -1,8 +1,15 @@
-const Listing = require('../models/Listing');
-const Auction = require('../models/Auction');
-const Bid = require('../models/Bid');
+const Listing = require("../models/Listing");
+const Auction = require("../models/Auction");
+const Bid = require("../models/Bid");
 
-const handleNFTListed = async (listingId, seller, nftContract, tokenId, price, event) => {
+const handleNFTListed = async (
+  listingId,
+  seller,
+  nftContract,
+  tokenId,
+  price,
+  event,
+) => {
   try {
     await Listing.create({
       listingId: Number(listingId),
@@ -11,7 +18,7 @@ const handleNFTListed = async (listingId, seller, nftContract, tokenId, price, e
       tokenId: Number(tokenId),
       price: price.toString(),
       active: true,
-      transactionHash: event.log.transactionHash
+      transactionHash: event.log.transactionHash,
     });
     console.log(`✅ Listing #${listingId} created`);
   } catch (error) {
@@ -27,8 +34,8 @@ const handleNFTSold = async (listingId, buyer, seller, price, event) => {
         active: false,
         buyer: buyer.toLowerCase(),
         soldAt: new Date(),
-        transactionHash: event.log.transactionHash
-      }
+        transactionHash: event.log.transactionHash,
+      },
     );
     console.log(`💰 Listing #${listingId} sold to ${buyer}`);
   } catch (error) {
@@ -42,8 +49,8 @@ const handleListingCancelled = async (listingId, event) => {
       { listingId: Number(listingId) },
       {
         active: false,
-        cancelledAt: new Date()
-      }
+        cancelledAt: new Date(),
+      },
     );
     console.log(`❌ Listing #${listingId} cancelled`);
   } catch (error) {
@@ -51,7 +58,15 @@ const handleListingCancelled = async (listingId, event) => {
   }
 };
 
-const handleAuctionCreated = async (auctionId, seller, nftContract, tokenId, startingPrice, endTime, event) => {
+const handleAuctionCreated = async (
+  auctionId,
+  seller,
+  nftContract,
+  tokenId,
+  startingPrice,
+  endTime,
+  event,
+) => {
   try {
     await Auction.create({
       auctionId: Number(auctionId),
@@ -59,12 +74,12 @@ const handleAuctionCreated = async (auctionId, seller, nftContract, tokenId, sta
       nftContract: nftContract.toLowerCase(),
       tokenId: Number(tokenId),
       startPrice: startingPrice.toString(),
-      highestBid: '0',
+      highestBid: "0",
       endTime: new Date(Number(endTime) * 1000), // Unix → JS Date
       active: true,
       claimed: false,
       cancelled: false,
-      transactionHash: event.log.transactionHash
+      transactionHash: event.log.transactionHash,
     });
     console.log(`🏷️ Auction #${auctionId} created`);
   } catch (error) {
@@ -81,8 +96,8 @@ const handleBidPlaced = async (auctionId, bidder, bidAmount, event) => {
       { auctionId: auctionIdNum },
       {
         highestBid: bidAmount.toString(),
-        highestBidder: bidder.toLowerCase()
-      }
+        highestBidder: bidder.toLowerCase(),
+      },
     );
 
     // Save bid to history
@@ -90,10 +105,12 @@ const handleBidPlaced = async (auctionId, bidder, bidAmount, event) => {
       auctionId: auctionIdNum,
       bidder: bidder.toLowerCase(),
       amount: bidAmount.toString(),
-      transactionHash: event.log.transactionHash
+      transactionHash: event.log.transactionHash,
     });
 
-    console.log(`💵 Bid placed on Auction #${auctionId}: ${bidAmount} wei by ${bidder}`);
+    console.log(
+      `💵 Bid placed on Auction #${auctionId}: ${bidAmount} wei by ${bidder}`,
+    );
   } catch (error) {
     console.error(`Error handling BidPlaced: ${error.message}`);
   }
@@ -106,8 +123,8 @@ const handleAuctionFinalized = async (auctionId, winner, finalPrice, event) => {
       {
         active: false,
         claimed: true,
-        winner: winner.toLowerCase()
-      }
+        winner: winner.toLowerCase(),
+      },
     );
     console.log(`🏆 Auction #${auctionId} finalized. Winner: ${winner}`);
   } catch (error) {
@@ -121,12 +138,31 @@ const handleAuctionCancelled = async (auctionId, event) => {
       { auctionId: Number(auctionId) },
       {
         active: false,
-        cancelled: true
-      }
+        cancelled: true,
+      },
     );
     console.log(`🚫 Auction #${auctionId} cancelled`);
   } catch (error) {
     console.error(`Error handling AuctionCancelled: ${error.message}`);
+  }
+};
+
+const handleAuctionEndTimeChanged = async (
+  auctionId,
+  oldEndTime,
+  newEndTime,
+  event,
+) => {
+  try {
+    await Auction.findOneAndUpdate(
+      { auctionId: Number(auctionId) },
+      {
+        endTime: new Date(Number(newEndTime) * 1000),
+      },
+    );
+    console.log(`⏱️ Auction #${auctionId} end time changed`);
+  } catch (error) {
+    console.error(`Error handling AuctionEndTimeChanged: ${error.message}`);
   }
 };
 
@@ -137,5 +173,6 @@ module.exports = {
   handleAuctionCreated,
   handleBidPlaced,
   handleAuctionFinalized,
-  handleAuctionCancelled
+  handleAuctionCancelled,
+  handleAuctionEndTimeChanged,
 };

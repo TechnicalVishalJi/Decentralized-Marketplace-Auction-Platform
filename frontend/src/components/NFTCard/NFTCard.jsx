@@ -3,8 +3,38 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiHeart } from "react-icons/fi";
 import styles from "./NFTCard.module.css";
+import { ethers } from "ethers";
 
-const NFTCard = ({ nft }) => {
+const NFTCard = ({ item }) => {
+  // `item` could be a Listing or an Auction. It contains `.nft` with the metadata.
+  const isAuction = item?.auctionId !== undefined;
+  const idPath = isAuction
+    ? `/auction/${item.auctionId}`
+    : `/listing/${item.listingId}`;
+  const nft = item?.nft || item;
+
+  // Formatting price/bid
+  const displayPrice = isAuction
+    ? item.highestBid !== "0"
+      ? ethers.formatEther(item.highestBid)
+      : ethers.formatEther(item.startPrice)
+    : item?.price
+      ? ethers.formatEther(item.price)
+      : "0";
+
+  const priceLabel = isAuction
+    ? item.highestBid !== "0"
+      ? "Top Bid"
+      : "Starting Bid"
+    : "Price";
+
+  const actionLabel = isAuction ? "Place Bid" : "Buy Now";
+
+  // IPFS formatting for image
+  const imageUrl = nft?.image
+    ? nft.image.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/")
+    : "https://via.placeholder.com/400x400?text=No+Image";
+
   return (
     <motion.div
       className={`glass-panel ${styles.nftCard}`}
@@ -14,13 +44,13 @@ const NFTCard = ({ nft }) => {
       transition={{ duration: 0.5 }}
       whileHover={{ y: -8 }}
     >
-      <Link to={`/nfts/${nft.id}`} className={styles.imageWrapper}>
-        <img src={nft.image} alt={nft.name} loading="lazy" />
+      <Link to={idPath} className={styles.imageWrapper}>
+        <img src={imageUrl} alt={nft?.name || "NFT"} loading="lazy" />
         <button
           className={styles.likeBtn}
           onClick={(e) => {
             e.preventDefault();
-            console.log("Like", nft.id);
+            console.log("Like", nft?.tokenId);
           }}
         >
           <FiHeart />
@@ -29,24 +59,20 @@ const NFTCard = ({ nft }) => {
 
       <div className={styles.cardInfo}>
         <div className={styles.headerRow}>
-          <Link to={`/nfts/${nft.id}`} className={styles.nameLink}>
-            <h4 className={styles.nftName}>{nft.name}</h4>
+          <Link to={idPath} className={styles.nameLink}>
+            <h4 className={styles.nftName}>
+              {nft?.name || `Token #${item?.tokenId}`}
+            </h4>
           </Link>
-          <div className={styles.creatorBadge}>
-            by <span className="gradient-text">{nft.creator}</span>
-          </div>
         </div>
 
         <div className={styles.priceRow}>
           <div className={styles.priceColumn}>
-            <span className={styles.priceLabel}>Price / Bid</span>
-            <span className={styles.priceValue}>{nft.price} ETH</span>
+            <span className={styles.priceLabel}>{priceLabel}</span>
+            <span className={styles.priceValue}>{displayPrice} ETH</span>
           </div>
-          <Link
-            to={`/nfts/${nft.id}`}
-            className={`btn-primary ${styles.buyBtn}`}
-          >
-            Buy Now
+          <Link to={idPath} className={`btn-primary ${styles.buyBtn}`}>
+            {actionLabel}
           </Link>
         </div>
       </div>

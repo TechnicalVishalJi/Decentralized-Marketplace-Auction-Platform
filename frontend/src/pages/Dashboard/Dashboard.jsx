@@ -9,6 +9,7 @@ import {
   FiActivity,
   FiZap,
   FiImage,
+  FiCreditCard,
 } from "react-icons/fi";
 import axios from "axios";
 import styles from "./Dashboard.module.css";
@@ -17,10 +18,17 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../utils/constants";
 import DashboardCreate from "./DashboardCreate";
 import DashboardSell from "./DashboardSell";
+import PlatformWallet from "./PlatformWallet";
 import WalletGuard from "../../components/WalletGuard/WalletGuard";
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(
+    () => sessionStorage.getItem("dashboardTab") || "overview",
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem("dashboardTab", activeTab);
+  }, [activeTab]);
   const { user, loading, linkWallet } = useAuth();
   const navigate = useNavigate();
   const [myNFTs, setMyNFTs] = useState([]);
@@ -301,6 +309,12 @@ const Dashboard = () => {
             <DashboardSell />
           </WalletGuard>
         );
+      case "wallet":
+        return (
+          <WalletGuard action="manage your platform wallet">
+            <PlatformWallet />
+          </WalletGuard>
+        );
       case "settings":
         return (
           <div className={styles.tabContent}>
@@ -486,6 +500,12 @@ const Dashboard = () => {
               onClick={() => setActiveTab("sell")}
             >
               <FiDollarSign className={styles.navIcon} /> Sell Items
+            </button>
+            <button
+              className={`${styles.navItem} ${activeTab === "wallet" ? styles.active : ""}`}
+              onClick={() => setActiveTab("wallet")}
+            >
+              <FiCreditCard className={styles.navIcon} /> Platform Wallet
             </button>
             <button
               className={`${styles.navItem} ${activeTab === "settings" ? styles.active : ""}`}

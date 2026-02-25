@@ -59,11 +59,34 @@ const AuctionDetail = () => {
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true);
   const [bidAmount, setBidAmount] = useState("");
+  const [useBidBalance, setUseBidBalance] = useState(false);
+  const [platformBalance, setPlatformBalance] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [showEditTime, setShowEditTime] = useState(false);
+  const [newEndTimeHours, setNewEndTimeHours] = useState("");
 
   const timer = useCountdown(auction?.endTime);
+
+  /* fetch platform balance */
+  useEffect(() => {
+    if (!user?.walletAddress || !window.ethereum) return;
+    (async () => {
+      try {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const contract = new ethers.Contract(
+          MARKETPLACE_CONTRACT_ADDRESS,
+          MARKETPLACE_ABI.abi,
+          provider,
+        );
+        const bal = await contract.getBalanceOfUser(user.walletAddress);
+        setPlatformBalance(bal);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [user]);
 
   useEffect(() => {
     const load = async () => {
@@ -102,7 +125,13 @@ const AuctionDetail = () => {
         signer,
       );
       const bidWei = ethers.parseEther(bidAmount);
-      const tx = await contract.placeBid(auction.auctionId, { value: bidWei });
+      // When useBidBalance=true, the bid amount is taken from platform balance (no msg.value)
+      const tx = await contract.placeBid(
+        auction.auctionId,
+        bidWei,
+        useBidBalance, // true = use platform balance, false = send ETH as value
+        { value: useBidBalance ? 0n : bidWei },
+      );
       await tx.wait();
       setSuccessMsg(`✅ Bid of ${bidAmount} ETH placed! Refreshing in 5s…`);
       setTxStatus("idle");
@@ -114,10 +143,10 @@ const AuctionDetail = () => {
     }
   };
 
-  const handleFinalize = async () => {
+  const handleCancelAuction = async () => {
     try {
       setError("");
-      setTxStatus("finalize");
+      setTxStatus("cancelling");
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(
@@ -125,13 +154,66 @@ const AuctionDetail = () => {
         MARKETPLACE_ABI.abi,
         signer,
       );
-      const tx = await contract.finalizeAuction(auction.auctionId);
+      const tx = await contract.cancelAuction(auction.auctionId);
       await tx.wait();
-      setSuccessMsg("✅ Auction finalized! Reloading…");
+      setSuccessMsg("✅ Auction cancelled! Reloading…");
+      setTxStatus("idle");
+      setTimeout(() => window.location.reload(), 3000);
+    } catch (err) {
+      setError(err.reason || err.message || "Cancellation failed.");
+      setTxStatus("idle");
+    }
+  };
+
+  const handleChangeEndTime = async () => {
+    if (!newEndTimeHours || isNaN(newEndTimeHours)) {
+      setError("Enter valid hours from now.");
+      return;
+    }
+    try {
+      setError("");
+      setTxStatus("editing");
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(
+        MARKETPLACE_CONTRACT_ADDRESS,
+        MARKETPLACE_ABI.abi,
+        signer,
+      );
+      const newEndTimeStamp =
+        Math.floor(Date.now() / 1000) + parseFloat(newEndTimeHours) * 3600;
+      const tx = await contract.changeAuctionEndTime(
+        auction.auctionId,
+        Math.floor(newEndTimeStamp),
+      );
+      await tx.wait();
+      setSuccessMsg("✅ End time updated! Reloading…");
+      setTxStatus("idle");
+      setTimeout(() => window.location.reload(), 3000);
+    } catch (err) {
+      setError(err.reason || err.message || "Update failed.");
+      setTxStatus("idle");
+    }
+  };
+
+  const handleClaim = async () => {
+    try {
+      setError("");
+      setTxStatus("claim");
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(
+        MARKETPLACE_CONTRACT_ADDRESS,
+        MARKETPLACE_ABI.abi,
+        signer,
+      );
+      const tx = await contract.claimNFT(auction.auctionId);
+      await tx.wait();
+      setSuccessMsg("✅ NFT claimed successfully! Reloading…");
       setTxStatus("idle");
       setTimeout(() => window.location.reload(), 4000);
     } catch (err) {
-      setError(err.reason || err.message || "Finalize failed.");
+      setError(err.reason || err.message || "Claim failed.");
       setTxStatus("idle");
     }
   };
@@ -175,8 +257,10 @@ const AuctionDetail = () => {
 
   const nft = auction.nft;
   const isSeller = user?.walletAddress?.toLowerCase() === auction.seller;
-  const canFinalize =
-    isSeller && timer.expired && auction.active && !auction.claimed;
+  const isWinner =
+    user?.walletAddress?.toLowerCase() === auction.highestBidder?.toLowerCase();
+  const canClaim =
+    isWinner && timer.expired && auction.active && !auction.claimed;
   const minBid =
     auction.highestBid !== "0"
       ? formatEth(((BigInt(auction.highestBid) * 101n) / 100n).toString())
@@ -561,56 +645,220 @@ const AuctionDetail = () => {
 
             {/* Bid box — only if auction is live */}
             {auction.active && !timer.expired && !isSeller && (
-              <div style={{ display: "flex", gap: 10 }}>
-                <div style={{ position: "relative", flex: 1 }}>
-                  <FiDollarSign
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              >
+                {/* Payment method toggle */}
+                <div>
+                  <p
                     style={{
-                      position: "absolute",
-                      left: 10,
-                      top: "50%",
-                      transform: "translateY(-50%)",
+                      margin: "0 0 8px",
+                      fontSize: "0.82rem",
+                      fontWeight: 600,
                       color: "var(--color-text-secondary)",
                     }}
-                  />
-                  <input
-                    type="number"
-                    step="0.001"
-                    placeholder={`Min ${minBid} ETH`}
-                    value={bidAmount}
-                    onChange={(e) => setBidAmount(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "11px 10px 11px 32px",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--glass-border-solid)",
-                      background: "var(--color-bg-primary)",
-                      color: "var(--color-text-primary)",
-                      boxSizing: "border-box",
-                    }}
-                  />
+                  >
+                    Bid Payment Method
+                  </p>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => setUseBidBalance(false)}
+                      style={{
+                        flex: 1,
+                        padding: "7px 6px",
+                        borderRadius: "var(--radius-md)",
+                        border: `2px solid ${!useBidBalance ? "var(--color-accent)" : "var(--glass-border-solid)"}`,
+                        background: !useBidBalance
+                          ? "rgba(99,102,241,0.1)"
+                          : "transparent",
+                        cursor: "pointer",
+                        color: !useBidBalance
+                          ? "var(--color-accent)"
+                          : "var(--color-text-secondary)",
+                        fontSize: "0.8rem",
+                        fontWeight: 600,
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      🦊 MetaMask
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setUseBidBalance(true)}
+                      style={{
+                        flex: 1,
+                        padding: "7px 6px",
+                        borderRadius: "var(--radius-md)",
+                        border: `2px solid ${useBidBalance ? "var(--color-success)" : "var(--glass-border-solid)"}`,
+                        background: useBidBalance
+                          ? "rgba(34,197,94,0.08)"
+                          : "transparent",
+                        cursor: "pointer",
+                        color: useBidBalance
+                          ? "var(--color-success)"
+                          : "var(--color-text-secondary)",
+                        fontSize: "0.8rem",
+                        fontWeight: 600,
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      ⚡ Platform Balance
+                    </button>
+                  </div>
+                  {useBidBalance && platformBalance !== null && (
+                    <div style={{ marginTop: 8 }}>
+                      <p
+                        style={{
+                          margin: "5px 0 0",
+                          fontSize: "0.78rem",
+                          color:
+                            BigInt(platformBalance) > 0n
+                              ? "var(--color-success)"
+                              : "#f59e0b",
+                        }}
+                      >
+                        Available:{" "}
+                        {parseFloat(
+                          ethers.formatEther(platformBalance),
+                        ).toFixed(6)}{" "}
+                        ETH
+                        {BigInt(platformBalance) === 0n &&
+                          " — top up via Platform Wallet tab."}
+                      </p>
+                      <p
+                        style={{
+                          margin: "4px 0 0",
+                          fontSize: "0.7rem",
+                          color: "var(--color-text-secondary)",
+                        }}
+                      >
+                        <i>
+                          Note: MetaMask will still open to pay the network Gas
+                          fee (which is required by the blockchain), but the bid
+                          amount itself will be 0 ETH in the transaction.
+                        </i>
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <button
-                  className="btn-primary"
-                  onClick={handleBid}
-                  disabled={txStatus !== "idle"}
-                  style={{ padding: "0 20px", whiteSpace: "nowrap" }}
-                >
-                  {txStatus === "confirm" ? "Confirming…" : "Place Bid"}
-                </button>
+                {/* Bid input + button */}
+                <div style={{ display: "flex", gap: 10 }}>
+                  <div style={{ position: "relative", flex: 1 }}>
+                    <FiDollarSign
+                      style={{
+                        position: "absolute",
+                        left: 10,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        color: "var(--color-text-secondary)",
+                      }}
+                    />
+                    <input
+                      type="number"
+                      step="0.001"
+                      placeholder={`Min ${minBid} ETH`}
+                      value={bidAmount}
+                      onChange={(e) => setBidAmount(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "11px 10px 11px 32px",
+                        borderRadius: "var(--radius-md)",
+                        border: "1px solid var(--glass-border-solid)",
+                        background: "var(--color-bg-primary)",
+                        color: "var(--color-text-primary)",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+                  <button
+                    className="btn-primary"
+                    onClick={handleBid}
+                    disabled={txStatus !== "idle"}
+                    style={{ padding: "0 20px", whiteSpace: "nowrap" }}
+                  >
+                    {txStatus === "confirm" ? "Confirming…" : "Place Bid"}
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* Finalize button for seller */}
-            {canFinalize && (
+            {/* Seller actions (Cancel & Edit Time) - Only if no bids yet */}
+            {isSeller &&
+              auction.active &&
+              auction.highestBid === "0" &&
+              !timer.expired && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                    marginTop: 10,
+                  }}
+                >
+                  <button
+                    className="btn-secondary"
+                    onClick={handleCancelAuction}
+                    disabled={txStatus !== "idle"}
+                    style={{
+                      width: "100%",
+                      padding: 12,
+                      color: "#ef4444",
+                      borderColor: "#ef4444",
+                    }}
+                  >
+                    {txStatus === "cancelling"
+                      ? "Cancelling…"
+                      : "❌ Cancel Auction"}
+                  </button>
+
+                  <button
+                    className="btn-secondary"
+                    onClick={() => setShowEditTime(!showEditTime)}
+                    style={{ width: "100%", padding: 12 }}
+                  >
+                    ⏱ Change End Time
+                  </button>
+
+                  {showEditTime && (
+                    <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                      <input
+                        type="number"
+                        placeholder="Hours from now"
+                        step="0.5"
+                        value={newEndTimeHours}
+                        onChange={(e) => setNewEndTimeHours(e.target.value)}
+                        style={{
+                          flex: 1,
+                          padding: "10px",
+                          borderRadius: "var(--radius-md)",
+                          border: "1px solid var(--glass-border-solid)",
+                          background: "var(--color-bg-primary)",
+                          color: "var(--color-text-primary)",
+                        }}
+                      />
+                      <button
+                        className="btn-primary"
+                        onClick={handleChangeEndTime}
+                        disabled={txStatus !== "idle"}
+                        style={{ padding: "0 16px" }}
+                      >
+                        {txStatus === "editing" ? "Updating…" : "Update"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+            {/* Claim button for winner */}
+            {canClaim && (
               <button
                 className="btn-primary"
-                onClick={handleFinalize}
+                onClick={handleClaim}
                 disabled={txStatus !== "idle"}
                 style={{ width: "100%", padding: 12 }}
               >
-                {txStatus === "finalize"
-                  ? "Finalizing…"
-                  : "🏆 Finalize Auction"}
+                {txStatus === "claim" ? "Claiming…" : "🏆 Claim NFT"}
               </button>
             )}
           </div>
