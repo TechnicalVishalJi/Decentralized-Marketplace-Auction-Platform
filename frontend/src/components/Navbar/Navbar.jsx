@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiSearch, FiMenu, FiX, FiUser, FiLogOut } from "react-icons/fi";
 import styles from "./Navbar.module.css";
 import { useAuth } from "../../context/AuthContext";
@@ -9,6 +9,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
 
   // Handle transparent to glassmorphic transition on scroll
@@ -27,8 +28,8 @@ const Navbar = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // In future phase: redirect to /explore?search="..." or trigger API
-      console.log("Searching for:", searchQuery);
+      navigate(`/explore?search=${encodeURIComponent(searchQuery)}`);
+      setMobileMenuOpen(false);
     }
   };
 

@@ -69,11 +69,9 @@ const ListingDetail = () => {
         MARKETPLACE_ABI.abi,
         signer,
       );
-      const tx = await contract.buyNFT(
-        listing.listingId,
-        false,
-        { value: listing.price },
-      );
+      const tx = await contract.buyNFT(listing.listingId, false, {
+        value: listing.price,
+      });
       await tx.wait();
       setSuccessMsg("🎉 Purchase successful! NFT is now yours.");
       setTxStatus("idle");

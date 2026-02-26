@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import NFTCard from "../../components/NFTCard/NFTCard";
 import styles from "./Explore.module.css";
 import {
@@ -9,82 +10,8 @@ import {
   FiGrid,
   FiList,
 } from "react-icons/fi";
-
-// Extended Mock Data for Explore Grid
-const mockExploreNFTs = [
-  {
-    id: 1,
-    name: "Ethereal Dreams #04",
-    creator: "AuraStudios",
-    price: "2.5",
-    image:
-      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2674&auto=format&fit=crop",
-    category: "art",
-  },
-  {
-    id: 2,
-    name: "Neon Samurai #88",
-    creator: "CyberPunkLabs",
-    price: "0.8",
-    image:
-      "https://images.unsplash.com/photo-1634986666676-ec8fd927c23d?q=80&w=2674&auto=format&fit=crop",
-    category: "gaming",
-  },
-  {
-    id: 3,
-    name: "Liquid Gold #12",
-    creator: "Alchemist",
-    price: "5.2",
-    image:
-      "https://images.unsplash.com/photo-1614812513172-567d2fe9cd91?q=80&w=2670&auto=format&fit=crop",
-    category: "art",
-  },
-  {
-    id: 4,
-    name: "Cosmic Entity #01",
-    creator: "StarGazers",
-    price: "1.1",
-    image:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
-    category: "collectibles",
-  },
-  {
-    id: 5,
-    name: "Virtual Land Parcel #45",
-    creator: "MetaWorlds",
-    price: "12.0",
-    image:
-      "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=2669&auto=format&fit=crop",
-    category: "virtual-worlds",
-  },
-  {
-    id: 6,
-    name: "Chromatic Symphony #09",
-    creator: "SoundBeats",
-    price: "0.4",
-    image:
-      "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop",
-    category: "music",
-  },
-  {
-    id: 7,
-    name: "Bored Ape Yacht #101",
-    creator: "YugaLabs",
-    price: "85.5",
-    image:
-      "https://images.unsplash.com/photo-1621619856624-42fd193a0661?q=80&w=2658&auto=format&fit=crop",
-    category: "collectibles",
-  },
-  {
-    id: 8,
-    name: "Holographic Punk #04",
-    creator: "CryptoPunks",
-    price: "45.0",
-    image:
-      "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?q=80&w=2697&auto=format&fit=crop",
-    category: "collectibles",
-  },
-];
+import axios from "axios";
+import { API_BASE_URL } from "../../utils/constants";
 
 const categories = [
   "All",
@@ -95,19 +22,258 @@ const categories = [
   "Music",
 ];
 
+// Realistic sample marketplace items to enrich the explore grid
+const MOCK_ITEMS = [
+  {
+    _mock: true,
+    auctionId: "m1",
+    tokenId: "m1",
+    startPrice: "500000000000000000",
+    highestBid: "750000000000000000",
+    endTime: new Date(Date.now() + 2 * 86400000).toISOString(),
+    nft: {
+      name: "Celestial Phoenix #12",
+      category: "art",
+      image:
+        "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800&auto=format&fit=crop",
+      description: "A vibrant mythical phoenix rendered in neon glows.",
+    },
+  },
+  {
+    _mock: true,
+    listingId: "m2",
+    tokenId: "m2",
+    price: "2300000000000000000",
+    nft: {
+      name: "Neon Samurai #88",
+      category: "gaming",
+      image:
+        "https://images.unsplash.com/photo-1634986666676-ec8fd927c23d?q=80&w=800&auto=format&fit=crop",
+      description: "A cyberpunk warrior forged in holographic light.",
+    },
+  },
+  {
+    _mock: true,
+    auctionId: "m3",
+    tokenId: "m3",
+    startPrice: "1000000000000000000",
+    highestBid: "0",
+    endTime: new Date(Date.now() + 5 * 86400000).toISOString(),
+    nft: {
+      name: "Liquid Gold #07",
+      category: "art",
+      image:
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
+      description: "Abstract digital gold in fluid motion.",
+    },
+  },
+  {
+    _mock: true,
+    listingId: "m4",
+    tokenId: "m4",
+    price: "550000000000000000",
+    nft: {
+      name: "Cosmic Entity #01",
+      category: "collectibles",
+      image:
+        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
+      description: "A rare celestial being from the outer cosmos.",
+    },
+  },
+  {
+    _mock: true,
+    auctionId: "m5",
+    tokenId: "m5",
+    startPrice: "300000000000000000",
+    highestBid: "450000000000000000",
+    endTime: new Date(Date.now() + 18 * 3600000).toISOString(),
+    nft: {
+      name: "Virtual Land Parcel #45",
+      category: "virtual-worlds",
+      image:
+        "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=800&auto=format&fit=crop",
+      description: "Prime real estate in the expanding MetaVerse.",
+    },
+  },
+  {
+    _mock: true,
+    listingId: "m6",
+    tokenId: "m6",
+    price: "400000000000000000",
+    nft: {
+      name: "Chromatic Symphony #09",
+      category: "music",
+      image:
+        "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800&auto=format&fit=crop",
+      description: "Sound visualized as a living digital painting.",
+    },
+  },
+  {
+    _mock: true,
+    listingId: "m7",
+    tokenId: "m7",
+    price: "8500000000000000000",
+    nft: {
+      name: "Bored Ape Yacht #101",
+      category: "collectibles",
+      image:
+        "https://images.unsplash.com/photo-1621619856624-42fd193a0661?q=80&w=800&auto=format&fit=crop",
+      description: "An exclusive ultra-rare collectible from the yacht club.",
+    },
+  },
+  {
+    _mock: true,
+    auctionId: "m8",
+    tokenId: "m8",
+    startPrice: "2000000000000000000",
+    highestBid: "2700000000000000000",
+    endTime: new Date(Date.now() + 3 * 86400000).toISOString(),
+    nft: {
+      name: "Holographic Punk #04",
+      category: "collectibles",
+      image:
+        "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?q=80&w=800&auto=format&fit=crop",
+      description: "A legendary punk rendered in prismatic holograms.",
+    },
+  },
+  {
+    _mock: true,
+    auctionId: "m9",
+    tokenId: "m9",
+    startPrice: "600000000000000000",
+    highestBid: "0",
+    endTime: new Date(Date.now() + 4 * 86400000).toISOString(),
+    nft: {
+      name: "Neural Dream #33",
+      category: "art",
+      image:
+        "https://images.unsplash.com/photo-1551721434-8b94ddff0e6d?q=80&w=800&auto=format&fit=crop",
+      description: "AI-generated art from the deepest layers of imagination.",
+    },
+  },
+  {
+    _mock: true,
+    listingId: "m10",
+    tokenId: "m10",
+    price: "1200000000000000000",
+    nft: {
+      name: "Dragon Realm Sword #06",
+      category: "gaming",
+      image:
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop",
+      description: "A legendary in-game weapon of ultimate power.",
+    },
+  },
+];
+
 const Explore = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParam = searchParams.get("search") || "";
+
   const [activeCategory, setActiveCategory] = useState("All");
   const [viewMode, setViewMode] = useState("grid");
+  const [allItems, setAllItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [localSearch, setLocalSearch] = useState(searchParam);
+
+  useEffect(() => {
+    setLocalSearch(searchParam);
+  }, [searchParam]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (localSearch.trim() !== "") {
+      searchParams.set("search", localSearch.trim());
+    } else {
+      searchParams.delete("search");
+    }
+    setSearchParams(searchParams);
+  };
+
+  useEffect(() => {
+    const fetchMarketplace = async () => {
+      try {
+        setLoading(true);
+        // Fetch all active listings and running auctions
+        const [listRes, aucRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/listings`),
+          axios.get(`${API_BASE_URL}/auctions?ended=false`),
+        ]);
+
+        const rawListings = listRes.data.data || [];
+        const rawAuctions = aucRes.data.data || [];
+
+        // Combine and fetch full NFT data for everything
+        const combined = [...rawListings, ...rawAuctions];
+        const tokenIds = [...new Set(combined.map((item) => item.tokenId))];
+
+        // Batch fetch NFT details
+        const map = {};
+        await Promise.all(
+          tokenIds.map(async (id) => {
+            try {
+              const r = await axios.get(`${API_BASE_URL}/nfts/${id}`);
+              map[id] = r.data.data;
+            } catch {
+              // Ignore failure for a single NFT
+            }
+          }),
+        );
+
+        // Attach NFT info to each marketplace item
+        const hydratedItems = combined
+          .map((item) => ({
+            ...item,
+            nft: map[item.tokenId],
+          }))
+          .filter((item) => item.nft) // Only keep items where we successfully fetched the NFT
+          .sort((a, b) => {
+            // Sort combined list newest first
+            const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            return timeB - timeA;
+          });
+
+        // Merge real items first, padded with mock items
+        setAllItems([...hydratedItems, ...MOCK_ITEMS]);
+      } catch (error) {
+        console.error("Failed to load marketplace:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMarketplace();
+  }, []);
 
   // Filter Logic
-  const filteredNFTs =
-    activeCategory === "All"
-      ? mockExploreNFTs
-      : mockExploreNFTs.filter(
-          (nft) =>
-            nft.category.toLowerCase().replace(" ", "-") ===
-            activeCategory.toLowerCase().replace(" ", "-"),
+  const filteredItems = useMemo(() => {
+    let filtered = allItems;
+
+    if (activeCategory !== "All") {
+      filtered = filtered.filter((item) => {
+        const cat = item.nft?.category || "other";
+        return (
+          cat.toLowerCase().replace(" ", "-") ===
+          activeCategory.toLowerCase().replace(" ", "-")
         );
+      });
+    }
+
+    if (searchParam) {
+      const q = searchParam.toLowerCase();
+      filtered = filtered.filter((item) => {
+        const nftName = (item.nft?.name || "").toLowerCase();
+        const nftDesc = (item.nft?.description || "").toLowerCase();
+        const seller = (item.seller || "").toLowerCase();
+
+        return nftName.includes(q) || nftDesc.includes(q) || seller.includes(q);
+      });
+    }
+
+    return filtered;
+  }, [allItems, activeCategory, searchParam]);
 
   return (
     <div className={`page-transition-enter-active ${styles.explorePage}`}>
@@ -122,14 +288,21 @@ const Explore = () => {
             minted on the Base network.
           </p>
 
-          <div className={styles.searchBarWrapper}>
+          <form
+            className={styles.searchBarWrapper}
+            onSubmit={handleSearchSubmit}
+          >
             <input
               type="text"
-              placeholder="Search by name, collection, or creator via Semantic AI"
+              placeholder="Search by name, collection, or creator..."
               className={styles.largeSearch}
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
             />
-            <button className="btn-primary">Search</button>
-          </div>
+            <button type="submit" className="btn-primary">
+              Search
+            </button>
+          </form>
         </div>
       </section>
 
@@ -180,29 +353,36 @@ const Explore = () => {
           </div>
 
           {/* Main Grid Render */}
-          <div
-            className={viewMode === "grid" ? styles.nftGrid : styles.nftList}
-          >
-            {filteredNFTs.map((nft) => (
-              <NFTCard key={nft.id} nft={nft} />
-            ))}
-          </div>
-
-          {filteredNFTs.length === 0 && (
+          {loading ? (
             <div className={styles.emptyState}>
-              <h3>No NFTs found in this category.</h3>
-              <p>Check back later or try a different filter.</p>
+              <h3 className="gradient-text">Loading Marketplace...</h3>
+              <p>Fetching the latest listings and active auctions securely.</p>
             </div>
-          )}
+          ) : (
+            <>
+              <div
+                className={
+                  viewMode === "grid" ? styles.nftGrid : styles.nftList
+                }
+              >
+                {filteredItems.map((item) => {
+                  // Generate an absolutely unique key since listingId and auctionId can overlap
+                  const uniqKey =
+                    item.auctionId !== undefined
+                      ? `auc-${item.auctionId}`
+                      : `list-${item.listingId}`;
+                  return <NFTCard key={uniqKey} item={item} />;
+                })}
+              </div>
 
-          <div className={styles.loadMoreContainer}>
-            <button
-              className="glass-panel"
-              style={{ padding: "12px 32px", fontWeight: "bold" }}
-            >
-              Load More
-            </button>
-          </div>
+              {filteredItems.length === 0 && (
+                <div className={styles.emptyState}>
+                  <h3>No items found.</h3>
+                  <p>Check back later or try a different filter.</p>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
     </div>

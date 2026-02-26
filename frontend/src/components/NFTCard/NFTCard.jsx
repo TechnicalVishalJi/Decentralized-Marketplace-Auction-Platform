@@ -8,9 +8,12 @@ import { ethers } from "ethers";
 const NFTCard = ({ item }) => {
   // `item` could be a Listing or an Auction. It contains `.nft` with the metadata.
   const isAuction = item?.auctionId !== undefined;
-  const idPath = isAuction
-    ? `/auction/${item.auctionId}`
-    : `/listing/${item.listingId}`;
+  const isMock = Boolean(item?._mock);
+  const idPath = isMock
+    ? null
+    : isAuction
+      ? `/auction/${item.auctionId}`
+      : `/listing/${item.listingId}`;
   const nft = item?.nft || item;
 
   // Formatting price/bid
@@ -28,12 +31,28 @@ const NFTCard = ({ item }) => {
       : "Starting Bid"
     : "Price";
 
-  const actionLabel = isAuction ? "Place Bid" : "Buy Now";
+  const actionLabel = isMock
+    ? "Demo Only"
+    : isAuction
+      ? "Place Bid"
+      : "Buy Now";
 
   // IPFS formatting for image
   const imageUrl = nft?.image
     ? nft.image.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/")
     : "https://via.placeholder.com/400x400?text=No+Image";
+
+  // Wrapper component: real items get Link, mock items get a non-navigating div
+  const Wrapper = ({ children, className }) =>
+    idPath ? (
+      <Link to={idPath} className={className}>
+        {children}
+      </Link>
+    ) : (
+      <div className={className} style={{ cursor: "default" }}>
+        {children}
+      </div>
+    );
 
   return (
     <motion.div
@@ -44,7 +63,7 @@ const NFTCard = ({ item }) => {
       transition={{ duration: 0.5 }}
       whileHover={{ y: -8 }}
     >
-      <Link to={idPath} className={styles.imageWrapper}>
+      <Wrapper className={styles.imageWrapper}>
         <img src={imageUrl} alt={nft?.name || "NFT"} loading="lazy" />
         <button
           className={styles.likeBtn}
@@ -55,15 +74,15 @@ const NFTCard = ({ item }) => {
         >
           <FiHeart />
         </button>
-      </Link>
+      </Wrapper>
 
       <div className={styles.cardInfo}>
         <div className={styles.headerRow}>
-          <Link to={idPath} className={styles.nameLink}>
+          <Wrapper className={styles.nameLink}>
             <h4 className={styles.nftName}>
               {nft?.name || `Token #${item?.tokenId}`}
             </h4>
-          </Link>
+          </Wrapper>
         </div>
 
         <div className={styles.priceRow}>
@@ -71,9 +90,18 @@ const NFTCard = ({ item }) => {
             <span className={styles.priceLabel}>{priceLabel}</span>
             <span className={styles.priceValue}>{displayPrice} ETH</span>
           </div>
-          <Link to={idPath} className={`btn-primary ${styles.buyBtn}`}>
-            {actionLabel}
-          </Link>
+          {idPath ? (
+            <Link to={idPath} className={`btn-primary ${styles.buyBtn}`}>
+              {actionLabel}
+            </Link>
+          ) : (
+            <span
+              className={`btn-primary ${styles.buyBtn}`}
+              style={{ opacity: 0.5, cursor: "default" }}
+            >
+              {actionLabel}
+            </span>
+          )}
         </div>
       </div>
     </motion.div>

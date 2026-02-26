@@ -63,7 +63,11 @@ const HeroSection = () => {
             <Link to="/explore" className={styles.mainBtn}>
               Explore Marketplace
             </Link>
-            <Link to="/create" className={`glass-panel ${styles.secondaryBtn}`}>
+            <Link
+              to="/dashboard"
+              className={`glass-panel ${styles.secondaryBtn}`}
+              onClick={() => sessionStorage.setItem("dashboardTab", "sell")}
+            >
               Create & Mint
             </Link>
           </motion.div>
