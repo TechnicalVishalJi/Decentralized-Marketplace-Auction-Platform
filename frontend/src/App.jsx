@@ -7,6 +7,7 @@ import Explore from "./pages/Explore/Explore";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Auth from "./pages/Auth/Auth";
 import About from "./pages/About/About";
+import Contact from "./pages/Contact/Contact";
 import AuctionDetail from "./pages/Auction/AuctionDetail";
 import ListingDetail from "./pages/Listing/ListingDetail";
 import ScrollToTop from "./components/ScrollToTop";
@@ -27,6 +28,7 @@ function App() {
             <Route path="/explore" element={<Explore />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/auction/:auctionId" element={<AuctionDetail />} />
             <Route path="/listing/:listingId" element={<ListingDetail />} />
