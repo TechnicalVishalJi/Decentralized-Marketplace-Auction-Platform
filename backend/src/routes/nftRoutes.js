@@ -29,6 +29,9 @@ router.get("/creator/:address", nftController.getNFTsByCreator);
 // GET /api/v1/nfts  (optionalAuth: logged-in users could see liked status in future)
 router.get("/", optionalAuth, nftController.getAllNFTs);
 
+// GET /api/v1/nfts/search  ← Must be before /:tokenId
+router.get("/search", nftController.searchNFTs);
+
 // GET /api/v1/nfts/:tokenId  ← Must be LAST
 router.get("/:tokenId", optionalAuth, nftController.getNFT);
 

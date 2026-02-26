@@ -1,4 +1,5 @@
 const NFT = require("../models/NFT");
+const aiEmbeddingService = require("../services/ai/aiEmbeddingService");
 
 // @desc    Get all NFTs with filters and pagination
 // @route   GET /api/v1/nfts
@@ -135,6 +136,57 @@ exports.getStats = async (req, res) => {
       },
     });
   } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+// @desc    Semantic Search for NFTs using AI Embeddings
+// @route   GET /api/v1/nfts/search
+// @access  Public
+exports.searchNFTs = async (req, res) => {
+  try {
+    const { q, limit = 20 } = req.query;
+
+    if (!q) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Search query 'q' is required" });
+    }
+
+    // 1. Convert text query to vector embedding
+    const queryVector = await aiEmbeddingService.generateTextEmbedding(q);
+
+    // 2. Perform MongoDB Vector Search
+    // Note: This requires an Atlas Vector Search index named "default" (or your custom name) on the `embedding` field.
+    const nfts = await NFT.aggregate([
+      {
+        $vectorSearch: {
+          index: "vector_index", // Using the same index created for aiVisionService
+          path: "embedding",
+          queryVector: queryVector,
+          numCandidates: 100,
+          limit: Number(limit),
+        },
+      },
+      {
+        $project: {
+          embedding: 0, // Exclude the heavy embedding array from response
+          score: { $meta: "vectorSearchScore" },
+        },
+      },
+    ]);
+
+    res.json({
+      success: true,
+      count: nfts.length,
+      data: nfts,
+    });
+  } catch (error) {
+    if (error.message.includes("generate vector embedding")) {
+      return res.status(502).json({
+        success: false,
+        error: "AI embedding generation failed. Check API Keys.",
+      });
+    }
     res.status(500).json({ success: false, error: error.message });
   }
 };

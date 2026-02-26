@@ -174,11 +174,34 @@ const Explore = () => {
   const [viewMode, setViewMode] = useState("grid");
   const [allItems, setAllItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [semanticTokenIds, setSemanticTokenIds] = useState(null);
+  const [semanticSearching, setSemanticSearching] = useState(false);
 
   const [localSearch, setLocalSearch] = useState(searchParam);
 
   useEffect(() => {
     setLocalSearch(searchParam);
+    const fetchSemanticSearch = async () => {
+      if (!searchParam) {
+        setSemanticTokenIds(null);
+        return;
+      }
+      try {
+        setSemanticSearching(true);
+        const res = await axios.get(
+          `${API_BASE_URL}/nfts/search?q=${encodeURIComponent(searchParam)}`,
+        );
+        const tokenIds = res.data.data.map((nft) => String(nft.tokenId));
+        setSemanticTokenIds(tokenIds);
+      } catch (err) {
+        console.error("Semantic search failed:", err);
+        // Fallback to local search if API fails
+        setSemanticTokenIds("fallback");
+      } finally {
+        setSemanticSearching(false);
+      }
+    };
+    fetchSemanticSearch();
   }, [searchParam]);
 
   const handleSearchSubmit = (e) => {
@@ -262,18 +285,45 @@ const Explore = () => {
     }
 
     if (searchParam) {
-      const q = searchParam.toLowerCase();
-      filtered = filtered.filter((item) => {
-        const nftName = (item.nft?.name || "").toLowerCase();
-        const nftDesc = (item.nft?.description || "").toLowerCase();
-        const seller = (item.seller || "").toLowerCase();
+      if (Array.isArray(semanticTokenIds)) {
+        // Semantic Search Filter + Sorting by Relevance
+        const q = searchParam.toLowerCase();
+        filtered = filtered
+          .filter((item) => {
+            if (item._mock) {
+              const nftName = (item.nft?.name || "").toLowerCase();
+              const nftDesc = (item.nft?.description || "").toLowerCase();
+              return nftName.includes(q) || nftDesc.includes(q);
+            }
+            return semanticTokenIds.includes(String(item.tokenId));
+          })
+          .sort((a, b) => {
+            // Sort real items by semantic index (lower index = higher relevance)
+            const idxA = a._mock
+              ? 999
+              : semanticTokenIds.indexOf(String(a.tokenId));
+            const idxB = b._mock
+              ? 999
+              : semanticTokenIds.indexOf(String(b.tokenId));
+            return idxA - idxB;
+          });
+      } else if (semanticTokenIds === "fallback" || semanticTokenIds === null) {
+        // Local Filter Fallback
+        const q = searchParam.toLowerCase();
+        filtered = filtered.filter((item) => {
+          const nftName = (item.nft?.name || "").toLowerCase();
+          const nftDesc = (item.nft?.description || "").toLowerCase();
+          const seller = (item.seller || "").toLowerCase();
 
-        return nftName.includes(q) || nftDesc.includes(q) || seller.includes(q);
-      });
+          return (
+            nftName.includes(q) || nftDesc.includes(q) || seller.includes(q)
+          );
+        });
+      }
     }
 
     return filtered;
-  }, [allItems, activeCategory, searchParam]);
+  }, [allItems, activeCategory, searchParam, semanticTokenIds]);
 
   return (
     <div className={`page-transition-enter-active ${styles.explorePage}`}>
@@ -353,10 +403,18 @@ const Explore = () => {
           </div>
 
           {/* Main Grid Render */}
-          {loading ? (
+          {loading || semanticSearching ? (
             <div className={styles.emptyState}>
-              <h3 className="gradient-text">Loading Marketplace...</h3>
-              <p>Fetching the latest listings and active auctions securely.</p>
+              <h3 className="gradient-text">
+                {semanticSearching
+                  ? "Searching with AI Semantic Engine..."
+                  : "Loading Marketplace..."}
+              </h3>
+              <p>
+                {semanticSearching
+                  ? "Our Gemini-powered vector search is analyzing your request..."
+                  : "Fetching the latest listings and active auctions securely."}
+              </p>
             </div>
           ) : (
             <>

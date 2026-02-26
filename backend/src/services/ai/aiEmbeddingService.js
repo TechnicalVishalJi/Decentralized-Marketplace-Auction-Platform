@@ -11,19 +11,25 @@ class AIEmbeddingService {
   async generateTextEmbedding(text) {
     try {
       const apiKey = process.env.GEMINI_API_KEY;
-      // Native free tier REST call
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-001:embedContent?key=${apiKey}`;
+      if (!apiKey)
+        throw new Error("GEMINI_API_KEY is missing from environment variables");
+
+      const url =
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent";
 
       const response = await axios.post(
         url,
         {
-          model: "models/text-embedding-001",
+          model: "models/gemini-embedding-001",
           content: {
             parts: [{ text: text }],
           },
         },
         {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey,
+          },
         },
       );
 
