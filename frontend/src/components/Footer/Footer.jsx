@@ -38,13 +38,13 @@ const Footer = () => {
                 <Link to="/explore">Explore</Link>
               </li>
               <li>
-                <Link to="/auctions">Live Auctions</Link>
+                <Link to="/#">Live Auctions</Link>
               </li>
               <li>
-                <Link to="/create">Mint NFT</Link>
+                <Link to="/dashboard">Mint NFT</Link>
               </li>
               <li>
-                <Link to="/rankings">Top Creators</Link>
+                <Link to="/#">Top Creators</Link>
               </li>
             </ul>
           </div>

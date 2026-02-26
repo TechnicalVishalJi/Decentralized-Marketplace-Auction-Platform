@@ -83,7 +83,7 @@ const Contact = () => {
                 </div>
                 <div className={styles.infoDetails}>
                   <h3>Email</h3>
-                  <p>support@cryptomarket.local</p>
+                  <p>support@cryptomarket.nodomain</p>
                 </div>
               </div>
 
@@ -93,7 +93,7 @@ const Contact = () => {
                 </div>
                 <div className={styles.infoDetails}>
                   <h3>Phone</h3>
-                  <p>+1 (555) 000-0000</p>
+                  <p>+91 1234567890</p>
                 </div>
               </div>
 

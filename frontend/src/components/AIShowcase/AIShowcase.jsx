@@ -120,7 +120,7 @@ const AIShowcase = () => {
               </li>
             </ul>
 
-            <Link to="/create" className={`btn-primary ${styles.ctaBtn}`}>
+            <Link to="/dashboard" className={`btn-primary ${styles.ctaBtn}`}>
               Try the AI Generator <FiArrowRight />
             </Link>
           </motion.div>
