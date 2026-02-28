@@ -17,7 +17,7 @@
 
 ---
 
-LIVE Preview : <a href="https://cryptomarketvishal.vercel.app">
+LIVE Preview : [https://cryptomarketvishal.vercel.app](https://cryptomarketvishal.vercel.app)
 
 ---
 
