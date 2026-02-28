@@ -17,6 +17,10 @@
 
 ---
 
+LIVE Preview : <a href="https://cryptomarketvishal.vercel.app">
+
+---
+
 ## Overview
 
 The **Decentralized AI Marketplace** is a robust, production-grade practice project designed to explore the intersection of **Web3 Smart Contracts**, **Modern Frontend Engineering**, and **Artificial Intelligence Microservices**.
@@ -138,14 +142,14 @@ The application will be running live at `http://localhost:5173`.
 
 ## Tech Stack Matrix
 
-| Category       | Technologies Used                                           |
-| -------------- | ----------------------------------------------------------- |
-| **Frontend**   | React, Vite, Framer Motion, Axios, React Icons, CSS Modules |
-| **Backend**    | Node.js, Express, Mongoose, JsonWebToken, Ethers.js (v6)    |
-| **Database**   | MongoDB Atlas, Atlas Vector Search                          |
-| **Blockchain** | Solidity, Hardhat, Base Sepolia, OpenZeppelin               |
-| **AI/ML**      | Google Gemini (Embeddings), Groq Llama (Vision), Freepik AI (Image Generation)                                                             |
-| **Storage**    | Pinata (IPFS), Cloudinary (CDN)                             |
+| Category       | Technologies Used                                                              |
+| -------------- | ------------------------------------------------------------------------------ |
+| **Frontend**   | React, Vite, Framer Motion, Axios, React Icons, CSS Modules                    |
+| **Backend**    | Node.js, Express, Mongoose, JsonWebToken, Ethers.js (v6)                       |
+| **Database**   | MongoDB Atlas, Atlas Vector Search                                             |
+| **Blockchain** | Solidity, Hardhat, Base Sepolia, OpenZeppelin                                  |
+| **AI/ML**      | Google Gemini (Embeddings), Groq Llama (Vision), Freepik AI (Image Generation) |
+| **Storage**    | Pinata (IPFS), Cloudinary (CDN)                                                |
 
 ---
 
