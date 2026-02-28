@@ -144,8 +144,8 @@ The application will be running live at `http://localhost:5173`.
 | **Backend**    | Node.js, Express, Mongoose, JsonWebToken, Ethers.js (v6)    |
 | **Database**   | MongoDB Atlas, Atlas Vector Search                          |
 | **Blockchain** | Solidity, Hardhat, Base Sepolia, OpenZeppelin               |
-| **AI/ML**      | Google Gemini (Embeddings), Groq Llama (Vision)             |
-| **Storage**    | Pinata (IPFS)                                               |
+| **AI/ML**      | Google Gemini (Embeddings), Groq Llama (Vision), Freepik AI (Image Generation)                                                             |
+| **Storage**    | Pinata (IPFS), Cloudinary (CDN)                             |
 
 ---
 
