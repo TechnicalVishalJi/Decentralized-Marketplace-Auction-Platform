@@ -1,5 +1,6 @@
 <div align="center">
   <h1>Decentralized AI Marketplace & Auction Platform</h1>
+  <img alt="CryptoMarket Logo" src="https://res.cloudinary.com/derp0chbp/image/upload/v1772255047/Decentralised%20Auction%20and%20Marketplace%20Platform/Screenshot_2026-02-28_103039_ekmzi9.png">
   <p>
     <strong>A next-generation Web3 marketplace integrating advanced dual-payment smart contracts with cutting-edge AI microservices.</strong>
   </p>
