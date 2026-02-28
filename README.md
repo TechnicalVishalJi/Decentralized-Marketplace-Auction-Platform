@@ -17,7 +17,7 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 The **Decentralized AI Marketplace** is a robust, production-grade practice project designed to explore the intersection of **Web3 Smart Contracts**, **Modern Frontend Engineering**, and **Artificial Intelligence Microservices**.
 
@@ -27,28 +27,28 @@ Crucially, the platform embeds intelligent AI workflows—including semantic vec
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🏛️ Smart Contract Infrastructure
+### Smart Contract Infrastructure
 
 - **Dual-Payment Engine:** Seamlessly supports purchasing and bidding via direct `ETH` transfers or through an internal user balance system.
 - **Advanced Auctions:** Fully decentralized English auctions with automatic time extensions for snipe-prevention.
 - **Robust Security:** Built with OpenZeppelin implementations, strict `ReentrancyGuards`, and comprehensive state-validation checks.
 
-### 🧠 AI Microservices Ecosystem
+### AI Microservices Ecosystem
 
 - **Semantic Vector Search:** Powered by **Google Gemini** embeddings and MongoDB Atlas `$vectorSearch`, allowing users to search the marketplace by _meaning_ rather than exact keywords.
 - **Plagiarism Detection:** Leverages **Groq AI** and Gemini vision capabilities during minting to block copycat NFTs with >95% visual similarity to existing assets.
 - **Price Estimator:** Real-time AI valuation modeling derived from trait analysis and historical marketplace synced data.
 - **Smart Concierge LLM:** A built-in intelligent assistant that guides new users through setting up MetaMask, minting basics, and bridging testnet funds.
 
-### 🎨 Premium Frontend Experience
+### Premium Frontend Experience
 
 - **Fluid UI Architecture:** Crafted with React, Vite, and strict CSS Modules implementing a deep, highly-animated Light Glassmorphism aesthetic.
 - **Instant SPA Routing:** Zero-reload architecture utilizing `react-router-dom` with Framer Motion route transition animations.
 - **Resilient Web3 Flow:** Secure, seamless MetaMask wallet linking authenticated via backend-driven cryptographic nonce signatures.
 
-### ⚙️ Scalable Backend Services
+### Scalable Backend Services
 
 - **Real-Time Blockchain Indexing:** Constant Ethers.js `WebSocketProvider` polling to instantaneously sync `Transfer`, `NFTListed`, and `BidPlaced` events into the MongoDB cluster.
 - **Cryptographic Security:** Hybrid JWT-based session management married with Web3 cryptographic proofs ensuring unauthorized state mutations are impossible.
@@ -56,7 +56,7 @@ Crucially, the platform embeds intelligent AI workflows—including semantic vec
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```text
 ┌──────────────────────────┐         ┌─────────────────────────┐
@@ -79,7 +79,7 @@ Crucially, the platform embeds intelligent AI workflows—including semantic vec
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -136,7 +136,7 @@ The application will be running live at `http://localhost:5173`.
 
 ---
 
-## 🛠️ Tech Stack Matrix
+## Tech Stack Matrix
 
 | Category       | Technologies Used                                           |
 | -------------- | ----------------------------------------------------------- |
@@ -149,7 +149,7 @@ The application will be running live at `http://localhost:5173`.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are heavily encouraged for this practice environment! If you have suggestions for optimizing the smart contracts, reducing React re-renders, or implementing new zero-knowledge proofs:
 
@@ -161,7 +161,7 @@ Contributions are heavily encouraged for this practice environment! If you have 
 
 ---
 
-## 🛡️ License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
