@@ -16,9 +16,9 @@ Output strictly in JSON format without any markdown wrappers or additional text:
       const response = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "llama3-8b-8192", // Fast, smaller model is fine for structured output
+          model: "llama-3.3-70b-versatile", // Using Llama 3 70B for JSON mapping
           messages: [{ role: "user", content: prompt }],
-          temperature: 0.2, // Low temperature for consistent JSON
+          temperature: 0.1, // Low temperature for consistent JSON
           response_format: { type: "json_object" },
         },
         {

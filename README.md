@@ -61,7 +61,7 @@ Crucially, the platform embeds intelligent AI workflows—including semantic vec
 ```text
 ┌──────────────────────────┐         ┌─────────────────────────┐
 │     Client Frontend      │         │     AI Microservices    │
-│  (React, Vite, Motion)   │<───────>│ (Gemini, Groq, DeepAI)  │
+│  (React, Vite, Framer)   │<───────>│ (Gemini, Groq, Freepick)│
 └────────────┬─────────────┘         └────────────┬────────────┘
              │                                    │
              v                                    v

@@ -17,9 +17,20 @@ class AIChatService {
       // Inject the system prompt to guide the AI
       const systemPrompt = {
         role: "system",
-        content: `You are the ultimate AI Concierge for a Decentralized NFT Marketplace. 
-Your job is to assist users in navigating the platform, explaining how to mint NFTs, connect their MetaMask wallet, and understand Web3 concepts. 
-Keep your answers brief, engaging, and highly professional. Format with Markdown.`,
+        content: `You are the ultimate AI Concierge for CryptoMarket, a Decentralized AI-Enhanced NFT Marketplace.
+Your job is to assist users in navigating the platform, explaining how to mint NFTs, connect their MetaMask wallet, and understand Web3 concepts.
+Keep your answers brief, engaging, and highly professional. Format with Markdown.
+
+Here is deep knowledge about the CryptoMarket project that you MUST employ when helping users:
+1. Blockchain Network: Base Sepolia Testnet.
+2. Tech Stack: React SPA Frontend (Vite), Node.js/Express Backend, MongoDB Atlas (Vector Search), and Hardhat (Solidity).
+3. Core Features:
+   - Dual-Payment Smart Contracts: Users can purchase or bid using direct ETH or an internal gas-less balance.
+   - Advanced Auctions: Fully decentralized English auctions with automatic snipe-prevention time extensions.
+   - Semantic Vector Search: We use Google Gemini to generate embeddings stored in MongoDB, allowing users to search NFTs by *meaning*.
+   - AI Plagiarism Detection: We use Groq constraints to stop users from minting visually plagiarized >95% copycat NFTs.
+   - AI Price Estimator: Live machine learning models predict NFT valuations based on historical traits.
+Use this context to be exceptionally accurate when specific questions arise.`,
       };
 
       const payloadMessages = [systemPrompt, ...messages];
@@ -33,10 +44,13 @@ Keep your answers brief, engaging, and highly professional. Format with Markdown
           "Content-Type": "application/json",
         },
         data: {
-          model: "llama3-70b-8192", // Using Llama 3 70B for exceptional intelligence and speed
+          model: "llama-3.3-70b-versatile",
           messages: payloadMessages,
           stream: true,
-          temperature: 0.7,
+          temperature: 1,
+          max_completion_tokens: 1024,
+          top_p: 1,
+          stop: null,
         },
         responseType: "stream",
       });
@@ -61,12 +75,10 @@ Keep your answers brief, engaging, and highly professional. Format with Markdown
       logger.error(`AI Chat Service Error: ${error.message}`);
       // If headers are not sent, we can send a standard JSON error
       if (!res.headersSent) {
-        res
-          .status(500)
-          .json({
-            success: false,
-            error: "Failed to communicate with AI Chatbot",
-          });
+        res.status(500).json({
+          success: false,
+          error: "Failed to communicate with AI Chatbot",
+        });
       } else {
         res.write(`data: {"error": "Connection to AI failed"}\n\n`);
         res.end();

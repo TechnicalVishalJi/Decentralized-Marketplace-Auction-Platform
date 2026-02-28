@@ -311,6 +311,9 @@ const DashboardSell = () => {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  const [aiEstimating, setAiEstimating] = useState(false);
+  const [aiEstimate, setAiEstimate] = useState(null);
+
   /* ── fetch platform balance ── */
   useEffect(() => {
     if (!user?.walletAddress || !window.ethereum) return;
@@ -413,6 +416,47 @@ const DashboardSell = () => {
   useEffect(() => {
     fetchActivity();
   }, [user, ownedNFTs]);
+
+  /* ── AI Price Estimation ── */
+  const handleAIEstimate = async () => {
+    if (!selectedNFT) {
+      setError("Please select an NFT to estimate its price.");
+      return;
+    }
+    try {
+      setAiEstimating(true);
+      setAiEstimate(null);
+      setError("");
+
+      const payload = {
+        nftMetadata: {
+          name: selectedNFT.name,
+          description: selectedNFT.description,
+          category: selectedNFT.category,
+          attributes: selectedNFT.attributes || [],
+          image: selectedNFT.image,
+        },
+      };
+
+      const res = await axios.post(`${API_BASE_URL}/ai/estimate`, payload);
+
+      if (res.data.success && res.data.data) {
+        setAiEstimate(res.data.data);
+        // Automatically populate the price form field with the parsed number if possible
+        const parsedPrice = parseFloat(
+          res.data.data.estimatedValue.replace(/[^0-9.]/g, ""),
+        );
+        if (!isNaN(parsedPrice) && parsedPrice > 0) {
+          setFormData((prev) => ({ ...prev, price: parsedPrice.toString() }));
+        }
+      }
+    } catch (e) {
+      console.error("AI Estimation Error:", e);
+      setError("AI was unable to estimate the price at this time.");
+    } finally {
+      setAiEstimating(false);
+    }
+  };
 
   /* ── list / auction ── */
   const handleList = async (e) => {
@@ -777,6 +821,62 @@ const DashboardSell = () => {
                     boxSizing: "border-box",
                   }}
                 />
+              </div>
+
+              {/* AI Estimate Button & Display */}
+              <div style={{ marginTop: 10 }}>
+                <button
+                  type="button"
+                  onClick={handleAIEstimate}
+                  disabled={aiEstimating}
+                  className="btn-secondary"
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    fontSize: "0.85rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "6px",
+                    background: "rgba(34, 193, 195, 0.1)",
+                    border: "1px solid rgba(34, 193, 195, 0.3)",
+                    color: "#22c1c3",
+                    borderRadius: "8px",
+                    cursor: aiEstimating ? "not-allowed" : "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  <FiZap />{" "}
+                  {aiEstimating
+                    ? "Analyzing Market Data..."
+                    : "Estimate Price with AI"}
+                </button>
+
+                {aiEstimate && (
+                  <div
+                    style={{
+                      marginTop: 10,
+                      padding: "12px",
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid var(--glass-border-solid)",
+                      borderRadius: "8px",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    <strong style={{ color: "var(--color-accent)" }}>
+                      AI Suggested Value: {aiEstimate.estimatedValue}
+                    </strong>
+                    <p
+                      style={{
+                        margin: "4px 0 0",
+                        color: "var(--color-text-secondary)",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {aiEstimate.rationale}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

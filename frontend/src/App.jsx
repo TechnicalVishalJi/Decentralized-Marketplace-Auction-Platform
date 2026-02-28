@@ -11,6 +11,7 @@ import Contact from "./pages/Contact/Contact";
 import AuctionDetail from "./pages/Auction/AuctionDetail";
 import ListingDetail from "./pages/Listing/ListingDetail";
 import ScrollToTop from "./components/ScrollToTop";
+import AIChatbot from "./components/AIChatbot/AIChatbot";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           </Routes>
         </main>
 
+        <AIChatbot />
         <Footer />
       </div>
     </Router>
