@@ -234,3 +234,36 @@
         font-size: 2.8rem;
     }
 }
+
+@media (max-width: 600px) {
+    .aiSection {
+        padding: 80px 0;
+    }
+
+    .title {
+        font-size: 2.2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .interactiveDemo {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .aiSection {
+        padding: 60px 0;
+    }
+
+    .title {
+        font-size: 1.8rem;
+    }
+
+    .ctaBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}

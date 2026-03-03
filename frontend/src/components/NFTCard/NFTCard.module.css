@@ -127,3 +127,22 @@
     border-radius: var(--radius-md);
     /* Less pill-shaped than general buttons */
 }
+
+@media (max-width: 480px) {
+    .nftName {
+        font-size: 1.05rem;
+    }
+
+    .priceLabel {
+        font-size: 0.75rem;
+    }
+
+    .priceValue {
+        font-size: 1rem;
+    }
+
+    .buyBtn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}

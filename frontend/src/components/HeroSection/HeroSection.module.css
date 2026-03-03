@@ -195,7 +195,8 @@
     .heroContent {
         flex-direction: column;
         text-align: center;
-        padding-top: 40px;
+        padding-top: 80px;
+        padding-bottom: 80px;
     }
 
     .videoOverlay {
@@ -222,10 +223,40 @@
     .ctaButtons {
         flex-direction: column;
         width: 100%;
+        gap: 12px;
+    }
+
+    .mainBtn,
+    .secondaryBtn {
+        width: 100%;
     }
 
     .statsRow {
         flex-wrap: wrap;
         gap: 24px;
+        justify-content: center;
+    }
+
+    .statBox h3 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .statBox h3 {
+        font-size: 1.5rem;
+    }
+
+    .heroContent {
+        padding-top: 60px;
+        padding-bottom: 80px;
     }
 }

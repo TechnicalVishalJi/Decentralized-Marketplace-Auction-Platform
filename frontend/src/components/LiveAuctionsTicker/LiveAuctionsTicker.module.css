@@ -129,3 +129,21 @@
     padding: 4px 8px;
     border-radius: var(--radius-sm);
 }
+
+@media (max-width: 600px) {
+    .tickerSection {
+        padding: 60px 0;
+    }
+
+    .header {
+        margin-bottom: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .auctionCard {
+        min-width: 280px;
+        padding: 10px;
+    }
+}

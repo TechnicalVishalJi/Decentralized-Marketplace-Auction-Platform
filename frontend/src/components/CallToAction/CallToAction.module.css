@@ -234,7 +234,7 @@
 
 @media (max-width: 768px) {
     .ctaSection {
-        padding: 100px 0;
+        padding: 120px 0;
     }
 
     .glassCard {
@@ -261,5 +261,29 @@
     .discordBtn {
         width: 100%;
         justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .ctaSection {
+        padding: 80px 0;
+    }
+
+    .glassCard {
+        padding: 40px 16px;
+    }
+
+    .title {
+        font-size: 2.2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .primaryBtn,
+    .discordBtn {
+        padding: 14px 24px;
+        font-size: 1.05rem;
     }
 }

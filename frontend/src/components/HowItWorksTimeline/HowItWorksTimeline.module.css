@@ -129,7 +129,33 @@
 }
 
 @media (max-width: 600px) {
+    .timelineSection {
+        padding: 80px 0;
+    }
+
     .timelineGrid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .timelineSection {
+        padding: 60px 0;
+    }
+
+    .sectionHeader {
+        margin-bottom: 40px;
+    }
+
+    .sectionHeader h2 {
+        font-size: 2.2rem;
+    }
+
+    .sectionHeader p {
+        font-size: 1rem;
+    }
+
+    .stepCard {
+        padding: 24px 16px;
     }
 }
