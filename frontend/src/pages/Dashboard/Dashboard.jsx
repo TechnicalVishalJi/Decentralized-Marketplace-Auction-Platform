@@ -160,7 +160,7 @@ const Dashboard = () => {
                     color: "var(--color-text-primary)",
                   }}
                 >
-                  🎨 Your Recent NFTs ({myNFTs.length})
+                  Your Recent NFTs ({myNFTs.length})
                 </h4>
                 <div
                   style={{
