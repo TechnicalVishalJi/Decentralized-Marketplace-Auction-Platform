@@ -172,6 +172,13 @@
     transform-origin: top;
 }
 
+.mobileLoginBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
 .mobileSearchForm {
     position: relative;
     display: flex;

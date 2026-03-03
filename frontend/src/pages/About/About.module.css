@@ -213,7 +213,7 @@
   }
 
   .title {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   .subtitle {
@@ -224,6 +224,10 @@
   .contentWrapper {
     gap: 5rem;
   }
+
+  /* .contentWrapper > div:first-child {
+      margin-bottom: 100px;
+  } */
 
   .sectionHeader {
     font-size: 1.25rem;

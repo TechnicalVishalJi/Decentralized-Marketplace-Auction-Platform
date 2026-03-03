@@ -294,6 +294,15 @@
 }
 
 @media (max-width: 480px) {
+    .showcaseSection {
+        padding-top: 50px !important;
+    }
+
+    .scene3d {
+        margin-top: -50px;
+        margin-bottom: 70px;
+    }
+
     .layout {
         padding: 60px 0;
     }

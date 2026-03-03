@@ -232,9 +232,7 @@
     }
 
     .statsRow {
-        flex-wrap: wrap;
-        gap: 24px;
-        justify-content: center;
+        display: none !important;
     }
 
     .statBox h3 {
