@@ -92,14 +92,7 @@ const Dashboard = () => {
               Welcome back to your decentralized control center.
             </p>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "20px",
-                marginBottom: "40px",
-              }}
-            >
+            <div className={styles.overviewGrid}>
               <div
                 className="glass-panel"
                 style={{
@@ -107,6 +100,7 @@ const Dashboard = () => {
                   display: "flex",
                   flexDirection: "column",
                   gap: "8px",
+                  minWidth: 0,
                 }}
               >
                 <FiActivity
@@ -132,6 +126,7 @@ const Dashboard = () => {
                   display: "flex",
                   flexDirection: "column",
                   gap: "8px",
+                  minWidth: 0,
                 }}
               >
                 <FiUser size={24} style={{ color: "var(--color-success)" }} />
@@ -141,6 +136,8 @@ const Dashboard = () => {
                     margin: 0,
                     color: "var(--color-text-secondary)",
                     fontSize: "0.9rem",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
                   }}
                 >
                   Logged in as {user.username || user.email}
@@ -244,21 +241,7 @@ const Dashboard = () => {
                         </p>
                       </div>
 
-                      {/* Mint badge */}
-                      <span
-                        style={{
-                          background: "rgba(99, 102, 241, 0.12)",
-                          color: "var(--color-accent)",
-                          padding: "4px 12px",
-                          borderRadius: "20px",
-                          fontSize: "0.78rem",
-                          fontWeight: 600,
-                          flexShrink: 0,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                      >
+                      <span className={styles.mintBadge}>
                         <FiZap size={12} /> Minted
                       </span>
                     </div>

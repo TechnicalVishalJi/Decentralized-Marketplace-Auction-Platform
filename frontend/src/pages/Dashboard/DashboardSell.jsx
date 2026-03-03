@@ -66,11 +66,8 @@ const AuctionCard = ({ auction, nftMap, onClick }) => {
   return (
     <div
       onClick={() => onClick(auction)}
-      className="glass-panel"
+      className={`glass-panel ${styles.sellItemCard}`}
       style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
         padding: "14px 16px",
         cursor: "pointer",
         transition: "all 0.2s",
@@ -131,7 +128,7 @@ const AuctionCard = ({ auction, nftMap, onClick }) => {
             : "—"}
         </p>
       </div>
-      <div style={{ textAlign: "right", flexShrink: 0 }}>
+      <div className={styles.sellItemStatus}>
         <span
           style={{
             display: "inline-block",
@@ -180,11 +177,8 @@ const ListingCard = ({ listing, nftMap, onClick }) => {
   return (
     <div
       onClick={() => onClick(listing)}
-      className="glass-panel"
+      className={`glass-panel ${styles.sellItemCard}`}
       style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
         padding: "14px 16px",
         cursor: "pointer",
         transition: "all 0.2s",
@@ -242,7 +236,7 @@ const ListingCard = ({ listing, nftMap, onClick }) => {
           Price: {formatEth(listing.price)} ETH
         </p>
       </div>
-      <div style={{ textAlign: "right", flexShrink: 0 }}>
+      <div className={styles.sellItemStatus}>
         <span
           style={{
             display: "inline-block",
@@ -646,14 +640,7 @@ const DashboardSell = () => {
           <FiZap color="var(--color-accent)" /> Create New Listing
         </h4>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 300px",
-            gap: 24,
-            alignItems: "start",
-          }}
-        >
+        <div className={styles.sellLayout}>
           {/* NFT picker */}
           <div>
             <p
@@ -673,7 +660,7 @@ const DashboardSell = () => {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(85px, 1fr))",
                   gap: 10,
                 }}
               >
@@ -756,7 +743,7 @@ const DashboardSell = () => {
                   onClick={() => setSellMode(m)}
                   className="btn-secondary"
                   style={{
-                    flex: 1,
+                    flex: "1 1 0",
                     padding: "8px 4px",
                     borderColor: sellMode === m ? "var(--color-accent)" : "",
                     background:
@@ -1017,7 +1004,8 @@ const DashboardSell = () => {
                   type="button"
                   onClick={() => setUseBalance(false)}
                   style={{
-                    flex: 1,
+                    flex: "1 1 0",
+                    minWidth: 0,
                     padding: "8px 6px",
                     borderRadius: "var(--radius-md)",
                     border: `2px solid ${!useBalance ? "var(--color-accent)" : "var(--glass-border-solid)"}`,
@@ -1039,7 +1027,8 @@ const DashboardSell = () => {
                   type="button"
                   onClick={() => setUseBalance(true)}
                   style={{
-                    flex: 1,
+                    flex: "1 1 0",
+                    minWidth: 0,
                     padding: "8px 6px",
                     borderRadius: "var(--radius-md)",
                     border: `2px solid ${useBalance ? "var(--color-success)" : "var(--glass-border-solid)"}`,

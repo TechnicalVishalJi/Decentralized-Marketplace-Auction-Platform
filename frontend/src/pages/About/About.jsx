@@ -63,7 +63,7 @@ const About = () => {
                 <FiDatabase size={24} />
               </div>
               <h2 className="gradient-text">
-                1. Core Smart Contracts (Base Sepolia)
+                Core Smart Contracts (Base Sepolia)
               </h2>
             </div>
             <div className={styles.grid}>
@@ -100,7 +100,7 @@ const About = () => {
               <div className={styles.iconWrapper}>
                 <FiCpu size={24} />
               </div>
-              <h2 className="gradient-text">2. AI Microservices Ecosystem</h2>
+              <h2 className="gradient-text">AI Microservices Ecosystem</h2>
             </div>
             <div className={styles.grid}>
               <div className={styles.featureCard}>
@@ -159,7 +159,7 @@ const About = () => {
               <div className={styles.iconWrapper}>
                 <FiLayout size={24} />
               </div>
-              <h2 className="gradient-text">3. Premium Interface Design</h2>
+              <h2 className="gradient-text">Premium Interface Design</h2>
             </div>
             <div className={styles.grid}>
               <div className={styles.featureCard}>
@@ -192,29 +192,13 @@ const About = () => {
                 interact with the AI suite, or try minting your own token via
                 our dashboard.
               </p>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  justifyContent: "center",
-                }}
-              >
+              <div className={styles.ctaButtons}>
                 <Link to="/explore" className="btn-primary">
                   Explore Marketplace
                 </Link>
                 <Link
                   to="/auth"
-                  className={`glass-panel btn-secondary`}
-                  style={{
-                    padding: "0 1.5rem",
-                    borderRadius: "8px",
-                    fontWeight: "600",
-                    border: "1px solid var(--color-border)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "var(--color-text-primary)",
-                  }}
+                  className={`glass-panel ${styles.secondaryBtn}`}
                 >
                   Create Account
                 </Link>

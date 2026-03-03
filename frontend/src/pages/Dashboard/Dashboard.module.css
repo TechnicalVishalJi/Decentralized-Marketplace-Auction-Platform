@@ -83,7 +83,8 @@
     display: grid;
     grid-template-columns: 280px 1fr;
     gap: 48px;
-    padding: 60px 0 !important;
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
 }
 
 /* Sidebar */
@@ -137,6 +138,28 @@
 /* Content Area */
 .contentArea {
     min-height: 500px;
+}
+
+.overviewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sellLayout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .sellLayout {
+        grid-template-columns: 1fr;
+    }
 }
 
 .tabContent h3 {
@@ -195,22 +218,31 @@
 @media (max-width: 900px) {
     .dashboardMain {
         grid-template-columns: 1fr;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        gap: 32px;
+        box-sizing: border-box;
     }
 
     .sidebar {
         position: relative;
         top: 0;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .sideNav {
-        flex-direction: row;
-        overflow-x: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 8px;
         padding: 12px;
     }
 
     .navItem {
-        white-space: nowrap;
+        justify-content: center;
         padding: 10px 16px;
+        white-space: nowrap;
+        text-align: center;
     }
 
     .avatarWrapper {
@@ -220,5 +252,162 @@
 
     .username {
         font-size: 1.2rem;
+    }
+
+    .walletActionsGrid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .walletInfoGrid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .sellItemCard {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 12px;
+    }
+
+    .sellItemStatus {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100%;
+        border-top: 1px solid var(--glass-border-solid);
+        padding-top: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboardPage {
+        padding-top: 60px;
+    }
+
+    .tabContent h3 {
+        font-size: 1.6rem;
+    }
+
+    .tabDescription {
+        font-size: 1rem;
+        margin-bottom: 24px;
+    }
+
+    .sidebarProfile {
+        padding: 24px 16px;
+        margin-bottom: 16px;
+    }
+}
+
+.mintBadge {
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--color-accent);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Wallet Tab Grids */
+.walletActionsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.walletInfoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+}
+
+/* Sell Item Responsive Cards */
+.sellItemCard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.sellItemStatus {
+    text-align: right;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+@media (max-width: 480px) {
+    .dashboardMain {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        gap: 24px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .overviewGrid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+
+    .mintBadge {
+        display: none !important;
+    }
+
+    .sidebarProfile {
+        padding: 20px 12px;
+    }
+
+    .avatarWrapper {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 12px;
+    }
+
+    .username {
+        font-size: 1.1rem;
+    }
+
+    .sideNav {
+        grid-template-columns: 1fr 1fr;
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .navItem {
+        padding: 8px;
+        font-size: 0.9rem;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .navIcon {
+        font-size: 1.2rem;
+    }
+
+    .tabContent h3 {
+        font-size: 1.4rem;
+    }
+
+    .emptyState {
+        padding: 40px 16px;
+    }
+
+    .emptyStateIcon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .emptyStateActions {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .emptyStateActions>* {
+        width: 100%;
     }
 }

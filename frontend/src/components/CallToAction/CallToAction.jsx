@@ -25,7 +25,7 @@ const TypeText = ({ text, delayOffset = 0, className = "" }) => {
                   key={charIndex}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  viewport={{ once: true, margin: "-100px" }}
+                  viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                   transition={{ duration: 0.01, delay: currentDelay }}
                 >
                   {char}

@@ -281,7 +281,7 @@ const Create = () => {
                   type="submit"
                   className={`btn-primary ${styles.submitBtn}`}
                 >
-                  <FiCheckCircle /> Create & Mint NFT
+                  <FiCheckCircle /> Create NFT
                 </button>
               </div>
             </form>

@@ -291,7 +291,7 @@ const PlatformWallet = () => {
       )}
 
       {/* ── actions ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+      <div className={styles.walletActionsGrid}>
         {/* Deposit */}
         <div className="glass-panel" style={{ padding: 24 }}>
           <h4
@@ -471,13 +471,7 @@ const PlatformWallet = () => {
         <h4 style={{ margin: "0 0 14px", fontSize: "0.95rem" }}>
           💡 How Platform Balance Works
         </h4>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 14,
-          }}
-        >
+        <div className={styles.walletInfoGrid}>
           {[
             {
               icon: "💸",

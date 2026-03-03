@@ -426,9 +426,9 @@ const DashboardCreate = () => {
               >
                 <FiCheckCircle />
                 {status === "idle" && mintingFee
-                  ? `Create & Mint NFT (${mintingFee} ETH)`
+                  ? `Create NFT (${mintingFee} ETH)`
                   : status === "idle"
-                    ? "Create & Mint NFT"
+                    ? "Create NFT"
                     : ""}
                 {status === "uploading-img" && "Uploading to IPFS..."}
                 {status === "uploading-meta" && "Finalizing Metadata..."}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiSearch, FiMenu, FiX, FiUser, FiLogOut } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Navbar.module.css";
 import { useAuth } from "../../context/AuthContext";
 
@@ -125,66 +126,77 @@ const Navbar = () => {
       </div>
 
       {/* MOBILE MENU DROPDOWN */}
-      <div
-        className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.mobileMenuOpen : ""}`}
-      >
-        <form onSubmit={handleSearchSubmit} className={styles.mobileSearchForm}>
-          <FiSearch className={styles.searchIcon} />
-          <input
-            type="text"
-            placeholder="Search..."
-            className={styles.searchInput}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </form>
-
-        {navLinks.map((link) => (
-          <Link
-            key={link.path}
-            to={link.path}
-            className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.active : ""}`}
-            onClick={() => setMobileMenuOpen(false)}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            className={styles.mobileMenu}
+            initial={{ opacity: 0, scaleY: 0, y: -10 }}
+            animate={{ opacity: 1, scaleY: 1, y: 0 }}
+            exit={{ opacity: 0, scaleY: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            {link.label}
-          </Link>
-        ))}
+            <form
+              onSubmit={handleSearchSubmit}
+              className={styles.mobileSearchForm}
+            >
+              <FiSearch className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search..."
+                className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </form>
 
-        {isAuthenticated ? (
-          <>
-            <Link
-              to="/dashboard"
-              className={`${styles.mobileNavLink} ${location.pathname === "/dashboard" ? styles.active : ""}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Dashboard
-            </Link>
-            <button
-              className={`btn-secondary ${styles.mobileLoginBtn}`}
-              onClick={() => {
-                logout();
-                setMobileMenuOpen(false);
-              }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                justifyContent: "center",
-              }}
-            >
-              <FiLogOut /> Logout
-            </button>
-          </>
-        ) : (
-          <Link
-            to="/auth"
-            className={`btn-primary ${styles.mobileLoginBtn}`}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <FiUser /> Login
-          </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.active : ""}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className={`${styles.mobileNavLink} ${location.pathname === "/dashboard" ? styles.active : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  className={`btn-secondary ${styles.mobileLoginBtn}`}
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    justifyContent: "center",
+                  }}
+                >
+                  <FiLogOut /> Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/auth"
+                className={`btn-primary ${styles.mobileLoginBtn}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <FiUser /> Login
+              </Link>
+            )}
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </nav>
   );
 };

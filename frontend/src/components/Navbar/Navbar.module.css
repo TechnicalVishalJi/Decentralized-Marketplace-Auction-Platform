@@ -168,17 +168,8 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all var(--transition-smooth);
     border-bottom: 1px solid var(--glass-border-solid);
-}
-
-.mobileMenuOpen {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    transform-origin: top;
 }
 
 .mobileSearchForm {
