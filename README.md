@@ -21,6 +21,20 @@ LIVE Preview : [https://cryptomarketvishal.vercel.app](https://cryptomarketvisha
 
 ---
 
+## Demo Video
+
+<div align="center">
+  <a href="https://youtu.be/OFeDN0hJ-yM" target="_blank">
+    <img src="https://img.youtube.com/vi/niMEMDzLGrU/maxresdefault.jpg" alt="CryptoMarket Demo Video" width="80%" style="border-radius: 12px;" />
+  </a>
+  <br /><br />
+  <a href="https://youtu.be/OFeDN0hJ-yM">
+    <img src="https://img.shields.io/badge/▶ Watch Full Demo-YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Demo" />
+  </a>
+</div>
+
+---
+
 ## Overview
 
 The **Decentralized AI Marketplace** is a robust, production-grade practice project designed to explore the intersection of **Web3 Smart Contracts**, **Modern Frontend Engineering**, and **Artificial Intelligence Microservices**.
