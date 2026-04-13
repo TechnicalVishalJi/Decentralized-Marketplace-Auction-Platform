@@ -25,7 +25,7 @@ LIVE Preview : [https://cryptomarketvishal.vercel.app](https://cryptomarketvisha
 
 <div align="center">
   <a href="https://youtu.be/OFeDN0hJ-yM" target="_blank">
-    <img src="https://img.youtube.com/vi/niMEMDzLGrU/maxresdefault.jpg" alt="CryptoMarket Demo Video" width="80%" style="border-radius: 12px;" />
+    <img src="https://img.youtube.com/vi/OFeDN0hJ-yM/maxresdefault.jpg" alt="CryptoMarket Demo Video" width="80%" style="border-radius: 12px;" />
   </a>
   <br /><br />
   <a href="https://youtu.be/OFeDN0hJ-yM">
